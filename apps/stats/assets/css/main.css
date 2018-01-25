@@ -1,0 +1,33 @@
+html {
+  font-weight: 100%;
+}
+
+
+body {
+  background-color: #fff;
+  font-family: Source Sans Pro, sans-serif;
+}
+
+.main {
+  width: 1200px; margin: 0 auto;
+}
+
+.seance-header {
+  font-size: 1rem; font-weight: 600;
+  background-color: #b4bf9f;
+}
+
+table {
+  width: 100%; max-width: 600px; border-collapse: collapse; margin: 0 auto 24px auto;
+}
+
+td {
+  border: solid 1px #333; padding: 4px;
+}
+
+td:nth-child(2) {
+  width: 10%;
+}
+
+.right { text-align: right; }
+.bold { font-weight: 600; }
