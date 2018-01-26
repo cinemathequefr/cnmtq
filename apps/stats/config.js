@@ -1,5 +1,3 @@
-"use strict";
-
 module.exports = {
   tarifCats: [ // Catégories tarifaires (ordonnées) pour le rapport quotidien
     ["Plein tarif", [1862472,1862556,1863732,1863768,1863774,1863784,1897466,1968658,2239989,2480231]],
@@ -14,7 +12,6 @@ module.exports = {
     ["Groupe enfant", [1881506,1881512,1881684,1914582,2292151,2300095,2300097]],
     ["Partenariats et promotion", [1862514,1862520,1862522,1862528,1862530,1862532,1862534,1862554,1862578,1862580,1862582,1862584,1862586,1863756,1863760,1863762,1863824,1863830,1863834,1968670,1968694,1968712,1968716,1968740,2020347,2200009,2212387,2225849,2311121,2311123,2315127,2458625]]
   ],
-
   momentLocaleFr: { // Dates en français (moment.js)
     months: ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"],
     monthsShort: ["jan", "fév", "mar", "avr", "mai", "juin", "juil", "aoû", "sep", "oct", "nov", "déc"],
