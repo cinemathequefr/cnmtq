@@ -4,21 +4,42 @@ html {
 
 
 body {
-  background-color: #fff;
-  font-family: Source Sans Pro, sans-serif;
+  margin: 0;
+  background-color: #b4bf9f;
+  font-family: /*Source Sans Pro, */Calibri, Helvetica, sans-serif;
 }
 
+
+.header-container {
+  position: relative;
+  height: 96px; width: 100%;
+  background-color: #66af63; background-color: #468f43;
+  color: #fff;
+}
+
+.header {
+  width: 1000px; margin: 0 auto;
+}
+
+
+h1 {
+  font-size: 1.5rem;
+}
+
+
 .main {
-  width: 1200px; margin: 0 auto;
+  width: 1000px; margin: 0 auto 48px auto; padding: 48px;
+  background-color: #fff;
+  box-sizing: border-box;
 }
 
 .seance-header {
   font-size: 1rem; font-weight: 600;
-  background-color: #b4bf9f;
+  background-color: #66af63;
 }
 
 table {
-  width: 100%; max-width: 600px; border-collapse: collapse; margin: 0 auto 24px auto;
+  width: 100%; border-collapse: collapse; margin: 0 auto 24px auto;
 }
 
 td {
