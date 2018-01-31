@@ -8,34 +8,26 @@ const router = new Router();
 
 moment.locale("fr", config.momentLocaleFr);
 
-router.get("/date/:date", async function (ctx, next) {
+router.redirect("/day", `/day/${ queries.lastDate() }`);
+
+router.get("/day/:date", async function (ctx, next) {
   ctx.type = "text/html; charset=utf-8";
   try {
-    var data = queries.date(ctx.params.date);
+    var data = queries.day(ctx.params.date);
+    var date = ctx.params.date;
 
-
-      // var trans = _(data).map(d => _(d).assign({ tickets: _(d.tickets).assign({ tarifCat2: tarifCat(d.tickets.tarif, config.tarifCats) }).value() }).value()).value();
-
-      // console.log(trans);
-
-
-    return ctx.render("date",
-      { moment: moment,
+    return ctx.render("day",
+      {
+        date: ctx.params.date,
+        moment: moment,
         data: _(data).map(d => _(d).assign({ tickets: _(d.tickets).assign({ tarifCat2: tarifCat(d.tickets.tarif, config.tarifCats) }).value() }).value()).value()
       }
     );
-    // return ctx.render("date", { moment: moment, data: data });
-
   } catch (err) {
     console.log(err);
     return;
   }
 });
-
-
-
-
-
 
 
 /** 
@@ -64,13 +56,5 @@ function tarifCat (tarif, cats) {
   })
   .value();
 }
-
-
-
-
-
-
-
-
 
 module.exports = router;

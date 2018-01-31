@@ -7,10 +7,11 @@ const adapter = new FileSync("./data/seances.json"); // To make it work from ser
 const db = low(adapter);
 
 module.exports = {
-  date: function (date) {
+  day: function (date) { // Data segment: day
     return db.filter(d => {
       return d.date.substring(0, 10) === date;
     })
     .value();
-  }
+  },
+  lastDate: () => db.map(d => d.date).max().value().substring(0, 10) // Last date available for the data
 };
