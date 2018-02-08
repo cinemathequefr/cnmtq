@@ -13,7 +13,7 @@ body {
 .header-container {
   position: relative;
   height: 96px; width: 100%;
-  background-color: #66af63; background-color: #468f43;
+  background-color: #001f00;
   color: #fff;
 }
 
@@ -28,7 +28,7 @@ h1 {
 
 
 .main {
-  width: 1000px; margin: 0 auto 48px auto; padding: 48px;
+  width: 1000px; margin: 24px auto 48px auto; padding: 48px;
   background-color: #fff;
   box-sizing: border-box;
 }

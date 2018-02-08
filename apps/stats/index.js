@@ -5,6 +5,8 @@ const router = require("./routes");
 
 const app = module.exports = new Koa();
 
+
+
 app.use(serve(__dirname + "/assets"));
 app.use(views(__dirname + "/views", { map: { html: "lodash" } }));
 app.use(router.routes());
