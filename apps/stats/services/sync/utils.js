@@ -68,7 +68,9 @@ function dateLastSeancesAvailable () {
 
 /**
  * calcDateFrom
- * @return {promise: object} : objet moment de la date à partir de laquelle requêter des données
+ * Obtient la date à partir de laquelle requêter les données (à partir dateLastSeancesAvailable)
+ * @dependencies dateLastSeanceAvailable, moment, yesterday
+ * @return {promise: object} : objet moment, ou null si aucune mise à jour n'est nécessaire
  */
 async function calcDateFrom () {
   var last = await dateLastSeancesAvailable();

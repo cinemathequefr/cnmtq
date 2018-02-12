@@ -10,8 +10,8 @@ const utils = require("./utils");
 
 (async function () {
   // console.log(await utils.dateLastSeancesAvailable().catch(e => { console.log(e); }));
-  console.log(await utils.calcDateFrom());
-  // console.log(await sync());
+  // console.log(await utils.calcDateFrom());
+  console.log(await sync());
 })();
 
 
@@ -41,8 +41,8 @@ async function sync () {
     return new Promise((resolve, reject) => {
       process.stdout.write("Ecriture du fichier: ");
       fs.writeFile(
-        config.path.seances,
-        // __dirname + "/../../data/test.json",
+        // config.path.seances,
+        __dirname + "/../../data/test.json",
         JSON.stringify(data),
         "utf8",
         (err) => {
