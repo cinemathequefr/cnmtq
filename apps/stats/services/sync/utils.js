@@ -1,17 +1,40 @@
 const _ = require("lodash");
 const fs = require("fs");
 const moment = require("moment");
+const csvtojson = require("csvtojson"); // https://github.com/Keyang/node-csvtojson
 const config = require("./config.js");
+
+// TODO : supprimer si possible tout appel à config.js
 
 module.exports = {
   aggregateTicketsToSeances: aggregateTicketsToSeances,
-  dateLastSeancesAvailable: dateLastSeancesAvailable,
-  calcDateFrom: calcDateFrom
+  calcDateFrom: calcDateFrom,
+  csvToJson: _csvToJson,
+  mergeSeances: mergeSeances,
+  readJsonFile: readJsonFile,
+  splitSeances: splitSeances,
+  writeJsonFile: writeJsonFile
 };
 
 
 /**
- *
+ * __dateLastSeancesAvailable
+ * A partir de données de séances *passées*, renvoie la date de la séance la plus récente (= date maximale).
+ * @param seancesData {Array: Object}: données JSON de séances *passées*.
+ * @return {Object moment} : date de la séance la plus récente.
+ * TODO: sortir le chemin d'accès au fichier
+ */
+function __dateLastSeancesAvailable (seancesData) {
+  return moment.max(_(seancesData).map(d => moment(d.date)).value());
+}
+
+
+/**
+ * aggregateTicketsToSeances
+ * TODO: documenter
+ * TODO: supprimer la dépendance à l'objet config (puis retirer celle-ci des imports du module)
+ * @param data {Array: Object}: données JSON de tickets
+ * @return {Array: Object}: données JSON de séances
  */
 function aggregateTicketsToSeances (data) {
   return _(data)
@@ -30,14 +53,6 @@ function aggregateTicketsToSeances (data) {
         compte: items.length,
         recette: _.sumBy(items, item => item.montant),
         tarif: _(items).groupBy("tarif").mapValues(item => item.length).value(),
-        // tarifCat: _(items).reduce(function (acc, item) {
-        //   return _({}).assign(acc, (function (item) {
-        //     if (_.indexOf(config.codesTarifsLp, item.tarif) > -1) return { lp: acc.lp + 1 }; // Codes tarifaires Libre Pass
-        //     if (item.montant == 0) return { gratuit: acc.gratuit + 1 };
-        //     return { payant: acc.payant + 1 };
-        //   })(item))
-        //   .value()
-        // }, { payant: 0, lp: 0, gratuit: 0 }),
         web: _(items).filter(function (item) { return _.indexOf(config.codesCanalWeb, item.idCanal) > -1; }).value().length // Codes canal de vente web
       }
     };
@@ -48,18 +63,69 @@ function aggregateTicketsToSeances (data) {
 }
 
 
-/**
- * dateLastSeancesAvailable
- * @return {promise: object} : objet moment de la dernière (= plus récente) date trouvée dans les données de séances passées
- * TODO: sortir le chemin d'accès au fichier
+/* calcDateFrom
+ * Obtient la date à partir de laquelle requêter les données, en fonction de la date de la dernière séance présente dans les données.
+ * Si les données passées sont à jour, on prend la date courante comme date de départ (pour requêter uniquement des données futures).
+ * @param seancesData {Object}: données JSON de séances.
+ * @return {promise: object} : objet moment, ou null si aucune mise à jour n'est nécessaire
  */
-function dateLastSeancesAvailable () {
+function calcDateFrom (seancesData) {
+  var last = __dateLastSeancesAvailable(seancesData);
+  return last.isSame(__yesterday(), "day") ? moment().startOf("day") : last.add(1, "days").startOf("day");
+}
+
+
+/**
+ * _csvToJson
+ * Convertit une chaîne CSV en objet JSON.
+ * @param csv {String} : chaîne de données au format CSV.
+ * @param headers {Array: String} : tableau des noms d'en-têtes de colonnes.
+ * @return {Object} : Données JSON.
+ */
+function _csvToJson (csv, headers) {
+ return new Promise((resolve, reject) => {
+    var o = [];
+    csvtojson({
+      delimiter: ";",
+      toArrayString: true,
+      noheader: false,
+      checkType: true, // Type inference
+      headers: headers
+    })
+    .fromString(csv)
+    .on("json", row => o.push(row))
+    .on("error", err => reject(err))
+    .on("done", () => resolve(o));
+  });
+}
+
+
+/**
+ * mergeSeances
+ * Fusionne un tableau de séances (initial) avec un tableau de séances supplémentaires (ajouts).
+ * En cas de collision, les séances ajoutées sont prioritaires.
+ * Cette fonction sert à mettre à jour les séances passées existantes avec les séances passées nouvelle obtenues.
+ * @param {Object} seances : collection de séances.
+ * @param {Object} added : collection de séances.
+ */
+function mergeSeances (seances, added) {
+  return _(seances).concat(added).groupBy("idSeance").map(_.last).sortBy("date").value();
+}
+
+
+/**
+ * readJsonFile
+ * Fonction générique de lecture de fichier JSON encodé en utf-8.
+ * @param path {String}: chemin d'accès.
+ * @return {Promise: Object}: données JSON parsées.
+ */
+function readJsonFile (path) {
   return new Promise((resolve, reject) => {
-    fs.readFile(__dirname + "/../../data/seances.json", "utf8", (err, data) => {
+    return fs.readFile(path, "utf8", (err, data) => {
       if (err) {
         reject(err);
       } else {
-        resolve(moment.max(_(JSON.parse(data)).map(d => moment(d.date)).value()));
+        resolve(JSON.parse(data));
       }
     });
   });
@@ -67,89 +133,63 @@ function dateLastSeancesAvailable () {
 
 
 /**
- * calcDateFrom
- * Obtient la date à partir de laquelle requêter les données (à partir dateLastSeancesAvailable)
- * @dependencies dateLastSeanceAvailable, moment, yesterday
- * @return {promise: object} : objet moment, ou null si aucune mise à jour n'est nécessaire
+ * splitSeances
+ * Divise une collection de séances en deux collections (avant et à partir d'une date)
+ * Pour l'usage actuel, on a besoindes séances passées (jusqu'à hier 23:59:00 inclus) et les séances futures (à partir d'aujourd'hui 00:00:00 inclus)
+ * On recommande de passer en paramètre une date "de référence", même si c'est la date courante
+ * @param seances {Object}  : collection de séances
+ * @param atDate{Object: moment} : date pour la césure (par défaut date courante)
  */
-async function calcDateFrom () {
-  var last = await dateLastSeancesAvailable();
-  return last.isSame(yesterday(), "day") ? null : last.add(1, "days").startOf("day");
-}
-
-
-/**
- * yesterday
- * Détermine la date d'hier, qui sert de date finale des données passées
- * Une exception est faite pour le mardi (renvoie le lundi)
- * @return {object} moment
- */
-function yesterday () {
-  var y = moment().startOf("day").subtract(1, "day");
-  return y.isoWeekday() === 2 ? y.clone().subtract(1, "day") : y;
+function splitSeances (seances, atDate) {
+  atDate = (atDate instanceof moment ? atDate : moment().startOf("day"));
+  return _(seances).partition(d => moment(d.date).isBefore(atDate, "day")).value();
 }
 
 
 /**
  * today
  * Aujourd'hui (ou demain si on est mardi)
+ * NB : non utilisé
  * @return {object} moment
  *
  */
-function today () {
-  var t = moment().startOf("day");
-  return t.isoWeekday() === 2 ? t.clone().add(1, "day") : t;
-}
-
-
-
-
-
-
-
-
-
-
+// function today () {
+//   var t = moment().startOf("day");
+//   return t.isoWeekday() === 2 ? t.clone().add(1, "day") : t;
+// }
 
 
 /**
- * calcDateFrom
- * Détermine la date de début pour la requête de données séances
- * - La date la plus récente pour laquelle des données sont déjà présentes dans seances.json (mais au plus tard hier)
- * - Si on ne peut pas la déterminer, la date de début historique des données
- * @return {string} Date au format YYYY-MM-DD
- * @todo : Séparer en deux promesses distinctes et consécutives : lecture de seances.json, puis détermination de la date de début de requête
+ * writeJsonFile
+ * Fonction générique d'écriture de fichier JSON encodé en utf-8.
+ * @param path {String}: chemin d'accès.
+ * @return {Promise: Object}: données JSON parsées.
  */
-/*
-function calcDateFrom () {
-  var dateLastAvailable;
+function writeJsonFile (path, data) {
   return new Promise((resolve, reject) => {
-    var reason = "La date de début de mise à jour n'a pas pu être déterminée. Vérifier le fichier de données ou utiliser le flag --force";
-    fs.readFile("./data/seances.json", "utf8", (err, data) => {
-
-      try {
-        initialSeances = JSON.parse(data); // IMPORTANT : initialSeances est global et servira pour la fusion avec les séances passées ajoutées (la promesse aura été résolue) TODO: plutôt passer cette valeur dans la résolution de la promesse
-      } catch(e) {
-        initialSeances = [];
-      }
-
-      if (err) {
-        reject(reason);
-      } else {
-        try {
-          dateLastAvailable =  moment(moment.max(_(JSON.parse(data)).map(d => moment(d.date)).value()));
-          if (dateLastAvailable.isSame(yesterday(), "day")) {
-            resolve(null);
-          } else {
-            resolve(dateLastAvailable.add(1, "days"));
-          }
-        } catch(e) {
-          console.log(e);
-          reject(reason);
+    return fs.writeFile(
+      path,
+      JSON.stringify(data, null, 2),
+      "utf8",
+      (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
         }
       }
-      resolve(dateLastAvailable);
-    });
+    );
   });
 }
-*/
+
+
+/**
+ * __yesterday
+ * Détermine la date d'hier, qui sert de date finale des données passées
+ * Une exception est faite pour le mardi (renvoie le lundi)
+ * @return {object} moment
+ */
+function __yesterday () {
+  var y = moment().startOf("day").subtract(1, "day");
+  return y.isoWeekday() === 2 ? y.clone().subtract(1, "day") : y;
+}

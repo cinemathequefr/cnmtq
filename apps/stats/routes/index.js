@@ -14,7 +14,7 @@ router.get("/day/:date", async function (ctx, next) {
   ctx.type = "text/html; charset=utf-8";
   try {
     var data = queries.day(ctx.params.date);
-    var date = ctx.params.date;
+    // var date = ctx.params.date;
 
     return ctx.render("day",
       {
