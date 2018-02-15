@@ -9,10 +9,10 @@ module.exports = {
 /**
  * Connect
  * Tente une connexion/authentification sur le serveur distant et renvoie l'ID de connexion en cas de réussite
- * @param {string} url
- * @param {string} login
- * @param {string} password
- * @return {Promise} ID de connexion
+ * @param url {String}
+ * @param login {String}
+ * @param password {String}
+ * @return ID de connexion {Promise}
  * @date 2017-06-13
  * @date 2018-02-07 : utilise async/await
  */
@@ -42,9 +42,9 @@ async function connect (url, login, password) {
 /**
  * Query
  * Fait une requête
- * @param queryUrl {string} URL de la requête
- * @param requestBody {string} Corps de la requête (à construite à partir de templates présents dans le fichier config)
- * @return {string} Chaîne de type csv
+ * @param queryUrl {String} URL de la requête
+ * @param requestBody {String} Corps de la requête (à construite à partir de templates présents dans le fichier config)
+ * @return {String} Chaîne de type csv
  * @date 2017-06-13 : version initiale
  * @date 2018-02-07 : utilise async/await
  * @todo Convertir la réponse en utf8

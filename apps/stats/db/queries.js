@@ -1,12 +1,9 @@
-const low = require("lowdb"); // https://github.com/typicode/lowdb
-const FileSync = require("lowdb/adapters/FileSync");
 const _ = require("lodash");
-
-const adapter = new FileSync(__dirname + "/../data/seances.json");
-const db = low(adapter);
+const db = require("../services/db");
 
 module.exports = {
   day: function (date) { // Data segment: day
+    console.log(db.last().value());
     return db.filter(d => {
       return d.date.substring(0, 10) === date;
     })

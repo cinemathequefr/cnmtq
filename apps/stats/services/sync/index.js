@@ -4,6 +4,7 @@ const moment = require("moment");
 const config = require("./config");
 const remote = require("./remote");
 const utils = require("./utils");
+const db = require("../db");
 
 (async function () {
   await sync();
@@ -26,6 +27,7 @@ async function sync (opts) {
   var fetchedSeancesData;
   var fetchedSeancesDataSplit; // Données de séances obtenues de la requête distante et séparées en passées et futures
   var existingSeancesData; // Données de séances existantes (= fichier) (passées et futures: [[], []])
+  var updatedSeancesData;
   var dateFrom, dateTo;
   var currentDate = moment().startOf("day"); // On capture la date courante
 
@@ -44,10 +46,15 @@ async function sync (opts) {
     fetchedSeancesData = utils.aggregateTicketsToSeances(fetchedTicketsJson);
     fetchedSeancesDataSplit = utils.splitSeances(fetchedSeancesData, currentDate); // => [[passées], [futures]]
 
+    updatedSeancesData = utils.mergeSeances(existingSeancesData[0], fetchedSeancesDataSplit[0]);
+
     await utils.writeJsonFile(
       __dirname + "/../../data/seances.json",
-      utils.mergeSeances(existingSeancesData[0], fetchedSeancesDataSplit[0])
+      updatedSeancesData
     );
+
+    db.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
+
 
     console.log(`Séances passées: ${ fetchedSeancesDataSplit[0].length } séances ajoutées.`);
   } catch (e) {
