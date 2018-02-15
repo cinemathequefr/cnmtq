@@ -3,7 +3,6 @@ const db = require("../services/db");
 
 module.exports = {
   day: function (date) { // Data segment: day
-    console.log(db.last().value());
     return db.filter(d => {
       return d.date.substring(0, 10) === date;
     })

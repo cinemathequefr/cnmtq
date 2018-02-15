@@ -3,6 +3,7 @@ const moment = require("moment");
 const _ = require("lodash");
 const queries = require("../db/queries");
 const config = require("../config");
+const sync = require("../services/sync");
 
 const router = new Router();
 
@@ -27,6 +28,15 @@ router.get("/day/:date", async function (ctx, next) {
     console.log(err);
     return;
   }
+});
+
+
+router.get("/sync", async function (ctx, get) {
+  await sync();
+  ctx.body = {
+    status: "success",
+    message: "Sychro OK"
+  };
 });
 
 

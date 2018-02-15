@@ -6,11 +6,13 @@ const remote = require("./remote");
 const utils = require("./utils");
 const db = require("../db");
 
+/*
 (async function () {
   await sync();
 })();
+*/
 
-// module.exports = sync;
+module.exports = sync;
 
   
 /**
