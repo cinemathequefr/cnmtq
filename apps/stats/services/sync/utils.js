@@ -10,6 +10,9 @@ module.exports = {
   aggregateTicketsToSeances: aggregateTicketsToSeances,
   calcDateFrom: calcDateFrom,
   csvToJson: _csvToJson,
+
+  excludeSeances: excludeSeances,
+
   mergeSeances: mergeSeances,
   readJsonFile: readJsonFile,
   splitSeances: splitSeances,
@@ -101,6 +104,20 @@ function _csvToJson (csv, headers) {
 
 
 /**
+ * excludeSeances
+ * Ajoute aux séances donc l'idSeance est présent dans une liste d'exclusion une propriété `{ exclude: true }`.
+ * @param seancesData { Array: Object } : Collection de séances
+ * @param excludeSeancesDara { Array } : Liste d'exclusion (idSeances)
+ * @return { Array: Object } : Collection de séances
+ */
+function excludeSeances (seancesData, excludeSeancesData) {
+  return _(seancesData).map(i => {
+    return _(excludeSeancesData).indexOf(i.idSeance) > -1 ? _(i).assign({ exclude: true }).value() : i;
+  }).value();
+}
+
+
+/**
  * mergeSeances
  * Fusionne un tableau de séances (initial) avec un tableau de séances supplémentaires (ajouts).
  * En cas de collision, les séances ajoutées sont prioritaires.
@@ -125,6 +142,7 @@ function readJsonFile (path) {
       if (err) {
         reject(err);
       } else {
+        // console.log(data);
         resolve(JSON.parse(data));
       }
     });
@@ -193,3 +211,7 @@ function __yesterday () {
   var y = moment().startOf("day").subtract(1, "day");
   return y.isoWeekday() === 2 ? y.clone().subtract(1, "day") : y;
 }
+
+
+
+

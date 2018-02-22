@@ -21,7 +21,8 @@ router.get("/day/:date", async function (ctx, next) {
       {
         date: ctx.params.date,
         moment: moment,
-        data: _(data).map(d => _(d).assign({ tickets: _(d.tickets).assign({ tarifCat2: tarifCat(d.tickets.tarif, config.tarifCats) }).value() }).value()).value()
+        data: _(data).reject({ exclude: true }).map(d => _(d).assign({ tickets: _(d.tickets).assign({ tarifCat2: tarifCat(d.tickets.tarif, config.tarifCats) }).value() }).value()).value()
+        // data: _(data).map(d => _(d).assign({ tickets: _(d.tickets).assign({ tarifCat2: tarifCat(d.tickets.tarif, config.tarifCats) }).value() }).value()).value()
       }
     );
   } catch (err) {
