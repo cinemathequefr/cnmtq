@@ -1,7 +1,6 @@
 const low = require("lowdb"); // https://github.com/typicode/lowdb
 const FileSync = require("lowdb/adapters/FileSync");
-const utils = require("../sync/utils"); // TODO?: sortir utils du dossier sync.
-
+const utils = require("../../utils");
 
 const adapter = new FileSync(`${ __dirname }/../../data/seances.json`);
 const db = low(adapter);

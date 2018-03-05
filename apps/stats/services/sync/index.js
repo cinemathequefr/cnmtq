@@ -3,7 +3,7 @@ const fs = require("fs");
 const moment = require("moment");
 const config = require("./config");
 const remote = require("./remote");
-const utils = require("./utils");
+const utils = require("../../utils");
 const db = require("../db");
 
 /*
