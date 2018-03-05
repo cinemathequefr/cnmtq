@@ -2,7 +2,7 @@ const _ = require("lodash");
 const fs = require("fs");
 const moment = require("moment");
 const csvtojson = require("csvtojson"); // https://github.com/Keyang/node-csvtojson
-const config = require("./config.js");
+const config = require("./config");
 
 // TODO : supprimer si possible tout appel à config.js
 
@@ -35,7 +35,7 @@ function __dateLastSeancesAvailable (seancesData) {
 /**
  * aggregateTicketsToSeances
  * TODO: documenter
- * TODO: supprimer la dépendance à l'objet config (puis retirer celle-ci des imports du module)
+ * TODO: supprimer la dépendance à l'objet config ?
  * @param data {Array: Object}: données JSON de tickets
  * @return {Array: Object}: données JSON de séances
  */

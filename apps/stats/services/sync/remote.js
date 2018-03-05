@@ -1,5 +1,5 @@
 const request = require("request-promise"); // https://github.com/request/request-promise
-const config = require("./config.js");
+const config = require("../../config");
 
 module.exports = {
   connect: connect,
@@ -58,10 +58,10 @@ async function query (connectId, requestBody) {
   try {
     sessionId = (await request({
       method: "POST",
-      uri: config.queryUrl,
+      uri: config.sync.queryUrl,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": config.cookieKey + "=" + connectId
+        "Cookie": config.sync.cookieKey + "=" + connectId
       },
       json: true,
       body: requestBody
@@ -78,9 +78,9 @@ async function query (connectId, requestBody) {
   try {
     res = await request({
       method: "GET",
-      uri: config.queryUrl + "&op=dl&format=csv&id=" + sessionId,
+      uri: config.sync.queryUrl + "&op=dl&format=csv&id=" + sessionId,
       headers: {
-        "Cookie": config.cookieKey + "=" + connectId
+        "Cookie": config.sync.cookieKey + "=" + connectId
       },
       json: false,
       resolveWithFullResponse: true // https://github.com/request/request-promise#get-the-full-response-instead-of-just-the-body

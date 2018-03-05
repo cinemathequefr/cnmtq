@@ -1,4 +1,4 @@
 node_modules/
 data/
+config/
 npm-debug.log
-config.js

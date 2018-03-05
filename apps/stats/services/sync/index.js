@@ -1,10 +1,10 @@
 const _ = require("lodash");
 const fs = require("fs");
 const moment = require("moment");
-const config = require("./config");
-const remote = require("./remote");
+const config = require("../../config");
 const utils = require("../../utils");
 const db = require("../db");
+const remote = require("./remote");
 
 /*
 (async function () {
@@ -40,11 +40,11 @@ async function sync (opts) {
     ]);
 
     dateFrom = utils.calcDateFrom(existingSeancesData[0]).format("YYYY-MM-DD");
-    dateTo = currentDate.clone().add(config.lookAheadDays - 1, "days").format("YYYY-MM-DD");
+    dateTo = currentDate.clone().add(config.sync.lookAheadDays - 1, "days").format("YYYY-MM-DD");
 
-    connectId = await remote.connect(config.connectUrl, config.login, config.password);
-    fetchedTicketsCsv = await remote.query(connectId, _.template(config.requestTemplates.tickets)({ dateFrom: dateFrom, dateTo: dateTo }));
-    fetchedTicketsJson = await utils.csvToJson(fetchedTicketsCsv, config.jsonHeaders["tickets"]);
+    connectId = await remote.connect(config.sync.connectUrl, config.sync.login, config.sync.password);
+    fetchedTicketsCsv = await remote.query(connectId, _.template(config.sync.requestTemplates.tickets)({ dateFrom: dateFrom, dateTo: dateTo }));
+    fetchedTicketsJson = await utils.csvToJson(fetchedTicketsCsv, config.sync.jsonHeaders["tickets"]);
     fetchedSeancesData = utils.aggregateTicketsToSeances(fetchedTicketsJson);
     fetchedSeancesDataSplit = utils.splitSeances(fetchedSeancesData, currentDate); // => [[passées], [futures]]
 
