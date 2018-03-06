@@ -40,7 +40,10 @@ async function sync (opts) {
     ]);
 
     dateFrom = utils.calcDateFrom(existingSeancesData[0]).format("YYYY-MM-DD");
-    dateTo = currentDate.clone().add(config.sync.lookAheadDays - 1, "days").format("YYYY-MM-DD");
+
+    // 2018-03-06 : on prend pour date de fin de requête la date du jour (+ lookAheadDays)
+    dateTo = currentDate.clone().add(config.sync.lookAheadDays, "days").format("YYYY-MM-DD");
+    // dateTo = currentDate.clone().add(config.sync.lookAheadDays - 1, "days").format("YYYY-MM-DD");
 
     console.log(dateFrom, dateTo);
 

@@ -64,15 +64,20 @@ function aggregateTicketsToSeances (data) {
 }
 
 
+
 /* calcDateFrom
  * Obtient la date à partir de laquelle requêter les données, en fonction de la date de la dernière séance présente dans les données.
  * Si les données passées sont à jour, on prend la date courante comme date de départ (pour requêter uniquement des données futures).
  * @param seancesData {Object}: données JSON de séances.
  * @return {promise: object} : objet moment, ou null si aucune mise à jour n'est nécessaire
  */
+
 function calcDateFrom (seancesData) {
-  var last = __dateLastSeancesAvailable(seancesData);
-  return last.isSame(__yesterday(), "day") ? moment().startOf("day") : last.add(1, "days").startOf("day");
+  // var last = __dateLastSeancesAvailable(seancesData);
+  // return last.isSame(__yesterday(), "day") ? moment().startOf("day") : last.add(1, "days").startOf("day");
+
+  // 2018-03-06: on prend comme date de début de requête la dernière date de données disponibles (ce qui va réécrire celles-ci)
+  return __dateLastSeancesAvailable(seancesData);
 }
 
 
@@ -156,10 +161,24 @@ function readJsonFile (path) {
  * @param seances {Object}  : collection de séances
  * @param atDate{Object: moment} : date pour la césure (par défaut date courante)
  */
+ /*
 function splitSeances (seances, atDate) {
   atDate = (atDate instanceof moment ? atDate : moment().startOf("day"));
   return _(seances).partition(d => moment(d.date).isBefore(atDate, "day")).value();
 }
+*/
+
+// 2018-03-03 : on sépare les données suivant la date/heure courante (en comptant 10 minutes de marge)
+function splitSeances (seances) {
+
+  return _(seances).partition(d => moment(d.date).isBefore(moment().subtract(10, "minutes"), "minute")).value();
+
+
+  // atDate = (atDate instanceof moment ? atDate : moment().startOf("day"));
+  // return _(seances).partition(d => moment(d.date).isBefore(atDate, "day")).value();
+}
+
+
 
 
 /**
