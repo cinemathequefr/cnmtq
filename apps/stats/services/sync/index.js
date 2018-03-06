@@ -42,6 +42,8 @@ async function sync (opts) {
     dateFrom = utils.calcDateFrom(existingSeancesData[0]).format("YYYY-MM-DD");
     dateTo = currentDate.clone().add(config.sync.lookAheadDays - 1, "days").format("YYYY-MM-DD");
 
+    console.log(dateFrom, dateTo);
+
     connectId = await remote.connect(config.sync.connectUrl, config.sync.login, config.sync.password);
     fetchedTicketsCsv = await remote.query(connectId, _.template(config.sync.requestTemplates.tickets)({ dateFrom: dateFrom, dateTo: dateTo }));
     fetchedTicketsJson = await utils.csvToJson(fetchedTicketsCsv, config.sync.jsonHeaders["tickets"]);

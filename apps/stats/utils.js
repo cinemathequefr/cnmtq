@@ -10,9 +10,7 @@ module.exports = {
   aggregateTicketsToSeances: aggregateTicketsToSeances,
   calcDateFrom: calcDateFrom,
   csvToJson: _csvToJson,
-
   excludeSeances: excludeSeances,
-
   mergeSeances: mergeSeances,
   readJsonFile: readJsonFile,
   splitSeances: splitSeances,
@@ -153,7 +151,7 @@ function readJsonFile (path) {
 /**
  * splitSeances
  * Divise une collection de séances en deux collections (avant et à partir d'une date)
- * Pour l'usage actuel, on a besoindes séances passées (jusqu'à hier 23:59:00 inclus) et les séances futures (à partir d'aujourd'hui 00:00:00 inclus)
+ * Pour l'usage actuel, on a besoin des séances passées (jusqu'à hier 23:59:00 inclus) et les séances futures (à partir d'aujourd'hui 00:00:00 inclus)
  * On recommande de passer en paramètre une date "de référence", même si c'est la date courante
  * @param seances {Object}  : collection de séances
  * @param atDate{Object: moment} : date pour la césure (par défaut date courante)
@@ -211,7 +209,3 @@ function __yesterday () {
   var y = moment().startOf("day").subtract(1, "day");
   return y.isoWeekday() === 2 ? y.clone().subtract(1, "day") : y;
 }
-
-
-
-
