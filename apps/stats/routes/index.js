@@ -5,7 +5,7 @@ const queries = require("../db/queries");
 const config = require("../config");
 const sync = require("../services/sync");
 
-const testmail = require("../services/mail/testmail.js"); // TEST
+// const testmail = require("../services/mail/testmail.js"); // TEST
 
 const router = new Router();
 
@@ -41,9 +41,10 @@ router.get("/sync", async function (ctx, get) {
   };
 });
 
-router.get("/testmail", async function (ctx, get) {
-  testmail();
-});
+
+// router.get("/testmail", async function (ctx, get) {
+//   testmail();
+// });
 
 
 
