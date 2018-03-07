@@ -5,6 +5,8 @@ const queries = require("../db/queries");
 const config = require("../config");
 const sync = require("../services/sync");
 
+const testmail = require("../services/mail/testmail.js"); // TEST
+
 const router = new Router();
 
 moment.locale("fr", config.momentLocaleFr);
@@ -31,7 +33,6 @@ router.get("/day/:date", async function (ctx, next) {
   }
 });
 
-
 router.get("/sync", async function (ctx, get) {
   await sync();
   ctx.body = {
@@ -39,6 +40,12 @@ router.get("/sync", async function (ctx, get) {
     message: "Sychro OK"
   };
 });
+
+router.get("/testmail", async function (ctx, get) {
+  testmail();
+});
+
+
 
 
 /** 
@@ -48,6 +55,7 @@ router.get("/sync", async function (ctx, get) {
  * @param tarif {Object} {"code1": compte1, "code2": compte2, ...}
  * @param cats {Array} [["cat1": [code1, code2, code3, ...]], ["cat2": [code4, code5, ...]], ...]
  * @return {Array} [["cat1": compte1], ["cat2": compte2], ...]
+ * @TODO : déplacer dans utils
  */
 function tarifCat (tarif, cats) {
   return _(
