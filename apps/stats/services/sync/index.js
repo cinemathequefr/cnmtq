@@ -6,6 +6,12 @@ const utils = require("../../utils");
 const db = require("../db");
 const remote = require("./remote");
 
+
+// const consolidate = require("consolidate");
+// const mail = require("./mail");
+
+
+
 /*
 (async function () {
   await sync();
@@ -61,6 +67,17 @@ async function sync (opts) {
     );
 
     db.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
+
+
+
+
+
+
+
+
+
+
+
 
 
     console.log(`Séances passées: ${ fetchedSeancesDataSplit[0].length } séances ajoutées.`);

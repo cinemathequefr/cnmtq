@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "consolidate": "^0.15.0",
     "csvtojson": "^1.1.9",
     "koa": "^2.4.1",
     "koa-compose": "^4.0.0",

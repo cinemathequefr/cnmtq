@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    body {
+      width: 700px;
+      font-family: Segoe UI, Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      color: #000000;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: solid 1px #333333;
+    }
+
+    td {
+      border: solid 1px #333333;
+      font-family: Segoe UI, Arial, Helvetica, sans-serif;
+      font-size: 14px;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+    </style>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td colspan="2">
+          <span class="date"><%= moment(d.date).format("ddd D MMM HH[h]mm") %></span>
+            <span class="salle"> / Salle <%= d.salle.code %></span>
+        </td>
+      </tr>
+      <tr>
+        <td class="right bold"><%= d.titre %></td>
+        <td class="right bold"><%= d.tickets.compte %></td>
+      </tr>
+      <% _.forEach(d.tickets.tarifCat2, function (v) { %>
+      <tr>
+        <td class="right"><%= v[0] %></td>
+        <td class="right"><%= v[1] %></td>
+      </tr>
+      <% }); %>
+    </table>
+  </body>
+</html>
