@@ -68,18 +68,6 @@ async function sync (opts) {
 
     db.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
 
-
-
-
-
-
-
-
-
-
-
-
-
     console.log(`Séances passées: ${ fetchedSeancesDataSplit[0].length } séances ajoutées.`);
   } catch (e) {
     console.log(e);
