@@ -23,11 +23,12 @@
             <tr>
               <td colspan="2" class="seance-header">
                 <span class="date"><%= moment(d.date).format("ddd D MMM HH[h]mm") %></span>
-                  <span class="salle"> / Salle <%= d.salle.code %></span>
+                  <span class="salle"> / Salle <%= d.salle.code %> /</span>
+                  <span class="id-seance"> <%= d.idSeance %></span>
               </td>
             </tr>
             <tr>
-              <td class="right bold"><%= d.titre %> (<%= d.idSeance %>)</td>
+              <td class="right bold"><%= d.titre %></td>
               <td class="right bold"><%= d.tickets.compte %></td>
             </tr>
             <% _.forEach(d.tickets.tarifCat2, function (v) { %>
