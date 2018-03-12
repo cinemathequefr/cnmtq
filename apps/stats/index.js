@@ -6,8 +6,7 @@ const schedule = require("node-schedule");
 const router = require("./routes");
 const sync = require("./services/sync");
 
-// const syncJob = schedule.scheduleJob("15 22 * * *", sync); // Ne marche pas (?)
-const syncJob = schedule.scheduleJob({ hour: 22, minute: 15 }, sync); // Tous les jours à 22:15 (https://github.com/node-schedule/node-schedule#object-literal-syntax)
+const syncJob = schedule.scheduleJob({ hour: 21, minute: 15 }, sync); // (Attention: heure UTC) Tous les jours à 22:15 (https://github.com/node-schedule/node-schedule#object-literal-syntax)
 
 const app = module.exports = new Koa();
 

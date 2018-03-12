@@ -1,10 +1,16 @@
 const _ = require("lodash");
 const fs = require("fs");
 const moment = require("moment");
+const timezone = require("moment-timezone");
 const csvtojson = require("csvtojson"); // https://github.com/Keyang/node-csvtojson
 const config = require("./config");
 
 // TODO : supprimer si possible tout appel à config.js
+
+moment.tz.setDefault("Europe/Paris");
+
+
+
 
 module.exports = {
   aggregateTicketsToSeances: aggregateTicketsToSeances,
@@ -169,13 +175,29 @@ function splitSeances (seances, atDate) {
 */
 
 // 2018-03-03 : on sépare les données suivant la date/heure courante (en comptant 10 minutes de marge)
-function splitSeances (seances) {
 
-  return _(seances).partition(d => moment(d.date).isBefore(moment().subtract(10, "minutes"), "minute")).value();
+/**
+ * splitSeances
+ * Divise une collection de séances en deux collections suivant la date/heure actuelle
+ * @param seances { Object } :  collection de séances
+ * @param offset { Number } : durée (en minute) à attendre après l'heure de la séance pour la considérer comme passée
+ * @return { Array } : [séances passées, séances futures]
+ */
 
+function splitSeances (seances, offset) {
+  offset = offset || 10;
+  console.log("Split", moment().format());
+  return _(seances).partition(d =>
+    moment(d.date)
+    .isBefore(
+      moment().subtract(offset, "minutes"),
+      "minutes"
+    )
+  )
+  .value();
 
-  // atDate = (atDate instanceof moment ? atDate : moment().startOf("day"));
-  // return _(seances).partition(d => moment(d.date).isBefore(atDate, "day")).value();
+  // return _(seances).partition(d => moment(d.date).isBefore(moment().subtract(offset, "minutes"), "minute")).value();
+  // return _(seances).partition(d => moment(d.date).isBefore(moment().subtract(10, "minutes"), "minute")).value();
 }
 
 

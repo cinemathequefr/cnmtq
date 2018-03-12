@@ -12,6 +12,8 @@ const remote = require("./remote");
 
 
 
+
+
 /*
 (async function () {
   await sync();
@@ -57,7 +59,9 @@ async function sync (opts) {
     fetchedTicketsCsv = await remote.query(connectId, _.template(config.sync.requestTemplates.tickets)({ dateFrom: dateFrom, dateTo: dateTo }));
     fetchedTicketsJson = await utils.csvToJson(fetchedTicketsCsv, config.sync.jsonHeaders["tickets"]);
     fetchedSeancesData = utils.aggregateTicketsToSeances(fetchedTicketsJson);
-    fetchedSeancesDataSplit = utils.splitSeances(fetchedSeancesData, currentDate); // => [[passées], [futures]]
+
+
+    fetchedSeancesDataSplit = utils.splitSeances(fetchedSeancesData); // => [[passées], [futures]]
 
     updatedSeancesData = utils.mergeSeances(existingSeancesData[0], fetchedSeancesDataSplit[0]);
 

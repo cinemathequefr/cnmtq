@@ -27,7 +27,7 @@
               </td>
             </tr>
             <tr>
-              <td class="right bold"><%= d.titre %></td>
+              <td class="right bold"><%= d.titre %> (<%= d.idSeance %>)</td>
               <td class="right bold"><%= d.tickets.compte %></td>
             </tr>
             <% _.forEach(d.tickets.tarifCat2, function (v) { %>
