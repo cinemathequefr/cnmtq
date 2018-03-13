@@ -16,8 +16,6 @@
       <% if (data.length === 0) { %>
         <div class="seance">Pas de données disponibles pour cette date.</div>
       <% } else { %>
-
-
         <table>
           <tr>
             <td class="right">Séances</td>
@@ -30,13 +28,8 @@
           <tr>
             <td class="right">Moyenne : entrées par séance</td>
             <td class="right"><%= format('# ##0,0', tickets / data.length) %></td>
-
           </tr>
         </table>
-
-
-
-
         <% _.forEach(data, function (d) { %>
         <div class="seance">
           <table>

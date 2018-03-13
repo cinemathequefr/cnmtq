@@ -8,7 +8,7 @@ const remote = require("./remote");
 
 
 // const consolidate = require("consolidate");
-// const mail = require("./mail");
+const mail = require("../mail");
 
 
 
@@ -69,6 +69,15 @@ async function sync (opts) {
       __dirname + "/../../data/seances.json",
       updatedSeancesData
     );
+
+    var c = await mail.send(
+      "Synchronisation",
+      `<p>Une synchronisation a été effectuée à ${ moment().format("YYYY-MM-DD HH:mm") }.</p>`,
+      config.recipients
+    );
+
+    console.log(c);
+
 
     db.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
 

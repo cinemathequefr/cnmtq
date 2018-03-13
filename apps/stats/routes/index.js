@@ -6,32 +6,23 @@ const queries = require("../db/queries");
 const config = require("../config");
 const sync = require("../services/sync");
 
-const testmail = require("../services/mail"); // TEST
+// const testmail = require("../services/mail"); // TEST
 const router = new Router();
 
 moment.locale("fr", config.momentLocaleFr);
 
 router.redirect("/day", `/day/${ queries.lastDate() }`);
 
-
-// router.get("/day", async function (ctx, next) {
-//   console.log(queries.lastDate());
-//   return;
-// });
-
 router.get("/day/:date", async function (ctx, next) {
   ctx.type = "text/html; charset=utf-8";
   try {
     var data;
     var queryDate = ctx.params.date;
-
  
     if (moment(queryDate, "YYYY-MM-DD", true).isValid() === false) { // https://stackoverflow.com/questions/43101278/how-to-handle-deprecation-warning-in-momentjs
       queryDate = queries.lastDate();
       ctx.redirect(`/day/${ queryDate }`);
     }
-
-    // queryDate = moment(queryDate).format("YYYY-MM-DD");
 
     data = queries.day(queryDate);
 
@@ -64,12 +55,9 @@ router.get("/sync", async function (ctx, next) {
   };
 });
 
-
-router.get("/testmail", async function (ctx, next) {
-  testmail();
-});
-
-
+// router.get("/testmail", async function (ctx, next) {
+//   testmail();
+// });
 
 
 /** 
