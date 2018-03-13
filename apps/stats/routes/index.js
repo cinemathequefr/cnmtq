@@ -1,30 +1,53 @@
 const Router = require("koa-router");
 const moment = require("moment");
 const _ = require("lodash");
+const format = require("number-format.js");
 const queries = require("../db/queries");
 const config = require("../config");
 const sync = require("../services/sync");
 
 const testmail = require("../services/mail"); // TEST
-
 const router = new Router();
 
 moment.locale("fr", config.momentLocaleFr);
 
 router.redirect("/day", `/day/${ queries.lastDate() }`);
 
+
+// router.get("/day", async function (ctx, next) {
+//   console.log(queries.lastDate());
+//   return;
+// });
+
 router.get("/day/:date", async function (ctx, next) {
   ctx.type = "text/html; charset=utf-8";
   try {
-    var data = queries.day(ctx.params.date);
-    // var date = ctx.params.date;
+    var data;
+    var queryDate = ctx.params.date;
+
+ 
+    if (moment(queryDate, "YYYY-MM-DD", true).isValid() === false) { // https://stackoverflow.com/questions/43101278/how-to-handle-deprecation-warning-in-momentjs
+      queryDate = queries.lastDate();
+      ctx.redirect(`/day/${ queryDate }`);
+    }
+
+    // queryDate = moment(queryDate).format("YYYY-MM-DD");
+
+    data = queries.day(queryDate);
 
     return ctx.render("day",
       {
-        date: ctx.params.date,
+        date: queryDate,
         moment: moment,
-        data: _(data).reject({ exclude: true }).map(d => _(d).assign({ tickets: _(d.tickets).assign({ tarifCat2: tarifCat(d.tickets.tarif, config.tarifCats) }).value() }).value()).value()
-        // data: _(data).map(d => _(d).assign({ tickets: _(d.tickets).assign({ tarifCat2: tarifCat(d.tickets.tarif, config.tarifCats) }).value() }).value()).value()
+        format: format,
+        data: _(data)
+          .reject({ exclude: true }) // TODO: en principe, inutile.
+          .map(d =>
+            _(d).assign({
+              tickets: _(d.tickets).assign({ tarifCat2: tarifCat(d.tickets.tarif, config.tarifCats) }).value()
+            })
+            .value())
+          .value()
       }
     );
   } catch (err) {
@@ -33,7 +56,7 @@ router.get("/day/:date", async function (ctx, next) {
   }
 });
 
-router.get("/sync", async function (ctx, get) {
+router.get("/sync", async function (ctx, next) {
   await sync();
   ctx.body = {
     status: "success",
@@ -42,7 +65,7 @@ router.get("/sync", async function (ctx, get) {
 });
 
 
-router.get("/testmail", async function (ctx, get) {
+router.get("/testmail", async function (ctx, next) {
   testmail();
 });
 
