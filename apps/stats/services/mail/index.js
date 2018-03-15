@@ -1,7 +1,5 @@
 const nodemailer = require("nodemailer");
 const config = require("../../config");
-// const _ = require("lodash");
-// const moment = require("moment");
 
 // Configuration du transport 
 const transporter = nodemailer.createTransport(config.smtp);
@@ -21,7 +19,8 @@ function send (subject, plainText, html, recipients) {
   return new Promise((resolve, reject) => {
     transporter.sendMail({
       from: config.sender,
-      to: recipients,
+      to: recipients.to,
+      bcc: recipients.bcc,
       subject: subject,
       text: plainText,
       html: html

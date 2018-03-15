@@ -18,8 +18,8 @@ async function daily (queryDate) {
   var data = queries.day(queryDate);
   var html;
   return new Promise(async function (resolve, reject) {
-
     try {
+
       html = await consolidate.lodash(
         __dirname + "/../views/mail-html-day.html",
         {
@@ -38,7 +38,7 @@ async function daily (queryDate) {
       );
 
       await mail.send(
-        `Fréquentation en salles du ${ moment(queryDate).format("dddd D MMMM YYYY") }`,
+        `Fréquentation en salles du ${ _.lowerCase(moment(queryDate).format("dddd D MMMM YYYY")) }`,
         "",
         html,
         config.recipients
@@ -48,7 +48,6 @@ async function daily (queryDate) {
     } catch (e) {
       reject(e);
     }
-
   });
 };
 

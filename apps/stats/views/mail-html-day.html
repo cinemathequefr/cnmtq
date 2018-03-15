@@ -1,84 +1,33 @@
-<!DOCTYPE html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-    body {
-      width: 700px;
-      font-family: Segoe UI, Arial, Helvetica, sans-serif;
-      font-size: 14px;
-      color: #000000;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      border: solid 1px #333333;
-    }
-
-    td {
-      border: solid 1px #333333;
-      font-family: Segoe UI, Arial, Helvetica, sans-serif;
-      font-size: 14px;
-    }
-
-    .right {
-      text-align: right;
-    }
-
-    .bold {
-      font-weight: bold;
-    }
-    </style>
-  </head>
-  <body>
-
-    <div class="main">
-      <h1><%= moment(date).format("dddd D MMMM YYYY") %></h1>
-      <% if (data.length === 0) { %>
-        <div class="seance">Pas de données disponibles pour cette date.</div>
-      <% } else { %>
-        <table>
-          <tr>
-            <td class="right">Séances</td>
-            <td class="right"><%= data.length %></td>
-          </tr>
-          <tr>
-            <td class="right">Nombre d'entrées</td>
-            <td class="right"><%= tickets = _(data).sumBy(d => d.tickets.compte) %></td>
-          </tr>
-          <tr>
-            <td class="right">Moyenne : entrées par séance</td>
-            <td class="right"><%= format('# ##0,0', tickets / data.length) %></td>
-          </tr>
-        </table>
-        <% _.forEach(data, function (d) { %>
-        <div class="seance">
-          <table>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width"/>
+  <style>
+  </style>
+</head>
+<body>
+  <table class="body" data-made-with-foundation>
+    <tr>
+      <td class="float-center" align="center" valign="top">
+        <center>
+          <table class="container">
             <tr>
-              <td colspan="2" class="sub"><%= moment(d.date).format("ddd D MMM HH[h]mm") %> - Salle <%= d.salle.code %></td>
-            <tr>
-            <tr>
-              <td class="seance-header">
-                <span class="title"><%= d.titre %></span>
-                <!--<span class="id-seance">(<%= d.idSeance %>)</span>-->
+              <td>
+
+                <h1>Fréquentation en salles du <%= moment(date).format("dddd D MMMM YYYY") %></h1>
+                
+
+
+
+                
+
               </td>
-              <td class="seance-header right bold"><%= d.tickets.compte %></td>
             </tr>
-            <% _.forEach(d.tickets.tarifCat2, function (v) { %>
-            <tr>
-              <td class="right"><%= v[0] %></td>
-              <td class="right"><%= v[1] %></td>
-            </tr>
-            <% }); %>
           </table>
-        </div>
-        <% }); %>
-      <% } %>
-    </div>
-
-
-
-  </body>
+        </center>
+      </td>
+    </tr>
+  </table>
+</body>
 </html>

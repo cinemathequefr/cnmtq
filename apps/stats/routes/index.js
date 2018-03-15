@@ -57,6 +57,11 @@ router.get("/testmail", async function (ctx, next) {
   }
 });
 
+router.get("/time", async function (ctx, next) {
+  ctx.body = moment().format();
+});
+
+
 
 router.get("/sync", async function (ctx, next) {
   await sync();

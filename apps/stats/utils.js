@@ -4,13 +4,9 @@ const moment = require("moment");
 const timezone = require("moment-timezone");
 const csvtojson = require("csvtojson"); // https://github.com/Keyang/node-csvtojson
 const config = require("./config");
-
 // TODO : supprimer si possible tout appel à config.js
 
 moment.tz.setDefault("Europe/Paris");
-
-
-
 
 module.exports = {
   aggregateTicketsToSeances: aggregateTicketsToSeances,
@@ -159,24 +155,6 @@ function readJsonFile (path) {
   });
 }
 
-
-/**
- * splitSeances
- * Divise une collection de séances en deux collections (avant et à partir d'une date)
- * Pour l'usage actuel, on a besoin des séances passées (jusqu'à hier 23:59:00 inclus) et les séances futures (à partir d'aujourd'hui 00:00:00 inclus)
- * On recommande de passer en paramètre une date "de référence", même si c'est la date courante
- * @param seances {Object}  : collection de séances
- * @param atDate{Object: moment} : date pour la césure (par défaut date courante)
- */
- /*
-function splitSeances (seances, atDate) {
-  atDate = (atDate instanceof moment ? atDate : moment().startOf("day"));
-  return _(seances).partition(d => moment(d.date).isBefore(atDate, "day")).value();
-}
-*/
-
-// 2018-03-03 : on sépare les données suivant la date/heure courante (en comptant 10 minutes de marge)
-
 /**
  * splitSeances
  * Divise une collection de séances en deux collections suivant la date/heure actuelle
@@ -187,7 +165,6 @@ function splitSeances (seances, atDate) {
 
 function splitSeances (seances, offset) {
   offset = offset || 10;
-  console.log("Split", moment().format());
   return _(seances).partition(d =>
     moment(d.date)
     .isBefore(
@@ -196,12 +173,7 @@ function splitSeances (seances, offset) {
     )
   )
   .value();
-
-  // return _(seances).partition(d => moment(d.date).isBefore(moment().subtract(offset, "minutes"), "minute")).value();
-  // return _(seances).partition(d => moment(d.date).isBefore(moment().subtract(10, "minutes"), "minute")).value();
 }
-
-
 
 
 /**

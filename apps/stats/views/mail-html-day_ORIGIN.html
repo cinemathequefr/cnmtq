@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr" style="font-weight:100%;">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body style="margin:8px;font-family:Segoe UI,Calibri,Helvetica,sans-serif;">
+    <h1 style="font-size:1.25rem;"><%= moment(date).format("dddd D MMMM YYYY") %></h1>
+    <table style="width:600px;border-collapse:collapse;margin:0 0 24px 0;font-family:Segoe UI,Calibri,Helvetica,sans-serif;">
+      <tr>
+        <td style="border:solid 1px #333;padding:4px;text-align:right;">Séances</td>
+        <td style="border:solid 1px #333;padding:4px;text-align:right;width:15%;"><%= data.length %></td>
+      </tr>
+      <tr>
+        <td style="border:solid 1px #333;padding:4px;text-align:right;">Nombre d'entrées</td>
+        <td style="border:solid 1px #333;padding:4px;text-align:right;width:15%;"><%= tickets = _(data).sumBy(d => d.tickets.compte) %></td>
+      </tr>
+      <tr>
+        <td style="border:solid 1px #333;padding:4px;text-align:right;">Moyenne : entrées par séance</td>
+        <td style="border:solid 1px #333;padding:4px;text-align:right;width:15%;"><%= format('# ##0,0', tickets / data.length) %></td>
+      </tr>
+    </table>
+    <% _.forEach(data, function (d) { %>
+    <div>
+      <table style="width:600px;border-collapse:collapse;margin:12px 0 12px 0;">
+        <tr>
+          <td colspan="2" style="border:none;padding:0 0 2px 0;font-weight:bold;font-size:15px;"><%= moment(d.date).format("ddd D MMM HH[h]mm") %> - Salle <%= d.salle.code %></td>
+        </tr><tr>
+        </tr><tr>
+          <td style="border:solid 1px #333;padding:4px;font-size:1rem;font-weight:bold;background-color:#66af63;">
+            <%= d.titre %>
+          </td>
+          <td style="border:solid 1px #333;padding:4px;font-size:1rem;font-weight:bold;background-color:#66af63;text-align:right;width:15%;"><%= d.tickets.compte %></td>
+        </tr>
+        <% _.forEach(d.tickets.tarifCat2, function (v) { %>
+        <tr>
+          <td style="border:solid 1px #333;padding:4px;text-align:right;"><%= v[0] %></td>
+          <td style="border:solid 1px #333;padding:4px;text-align:right;width:15%;"><%= v[1] %></td>
+        </tr>
+        <% }); %>
+      </table>
+    </div>
+    <% }); %>
+  </body>
+</html>
