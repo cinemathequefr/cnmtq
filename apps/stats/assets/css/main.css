@@ -62,6 +62,12 @@ td:nth-child(2) {
   width: 15%;
 }
 
+td.sub {
+  border: none; padding: 0 0 2px 0;
+  font-weight: 700; font-size: .938rem;
+
+}
+
 .title { font-weight: 700; }
 .id-seance { font-size: 1rem; }
 

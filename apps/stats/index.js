@@ -5,8 +5,18 @@ const schedule = require("node-schedule");
 
 const router = require("./routes");
 const sync = require("./services/sync");
+const controllers = require("./controllers");
+// const mailReport = require("./controllers/mail-report");
 
-const syncJob = schedule.scheduleJob({ hour: 21, minute: 15 }, sync); // (Attention: heure UTC) Tous les jours à 22:15 (https://github.com/node-schedule/node-schedule#object-literal-syntax)
+
+const syncJob = schedule.scheduleJob(
+  { hour: 22, minute: 15 }, // (Attention: heure UTC ? Non ?) Tous les jours à 22:15 (https://github.com/node-schedule/node-schedule#object-literal-syntax)
+  async function () {
+    await sync();
+    await controllers.mailReport.daily();
+  }
+);
+
 
 const app = module.exports = new Koa();
 

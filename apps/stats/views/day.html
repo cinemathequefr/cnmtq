@@ -34,13 +34,12 @@
         <div class="seance">
           <table>
             <tr>
+              <td colspan="2" class="sub"><%= moment(d.date).format("ddd D MMM HH[h]mm") %> - Salle <%= d.salle.code %></td>
+            <tr>
+            <tr>
               <td class="seance-header">
-                <span class="date"><%= moment(d.date).format("ddd D MMM HH[h]mm") %></span>
-                &ndash;
-                <span class="salle">Salle <%= d.salle.code %></span>
-                <br>
                 <span class="title"><%= d.titre %></span>
-                <span class="id-seance">(<%= d.idSeance %>)</span>
+                <!--<span class="id-seance">(<%= d.idSeance %>)</span>-->
               </td>
               <td class="seance-header right bold"><%= d.tickets.compte %></td>
             </tr>

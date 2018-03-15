@@ -1,58 +1,40 @@
 const nodemailer = require("nodemailer");
 const config = require("../../config");
-const _ = require("lodash");
-const moment = require("moment");
+// const _ = require("lodash");
+// const moment = require("moment");
 
+// Configuration du transport 
 const transporter = nodemailer.createTransport(config.smtp);
 
-// const mailOptions = {
-//   from: '"Stats" <stats@cnmtq.fr>',
-//   to: config.recipients,
-//   subject: "Séances du dimanche 4 mars 2018",
-//   text: "Dimanche 4 mars 2018\nCeci est un message automatique.",
-//   html: "<h1>Dimanche 4 mars 2018</h1><p>Ceci est un message automatique.</p><table><tr><td>Le Dernier empereur</td><td>97</td></tr><tr><td>Coup de cœur</td><td>186</td></tr></table>"
-// };
-
-
-function send (subject, html, recipients) {
+/**
+ * send
+ * Envoie un e-mail
+ * @param subject { String } Sujet du message
+ * @param plainText { String } Message au format texte brut
+ * @param html { String } Message au format HTML
+ * @param recipients { Array: String } Liste des adresses e-mail des destinataires
+ * @return { Promise }
+ */
+function send (subject, plainText, html, recipients) {
+  plainText = plainText || "";
+  html = html || "";
   return new Promise((resolve, reject) => {
     transporter.sendMail({
-      from: '"Stats" <stats@cnmtq.fr>',
+      from: config.sender,
       to: recipients,
       subject: subject,
+      text: plainText,
       html: html
     }, function (error, info) {
       if (error) {
-        reject("Erreur d'envoi.");
+        reject(error);
       } else {
-        resolve(`Message sent: ${ info.response }`);
+        resolve(info);
       }
     });
   });
 }
 
-
 module.exports = {
   send: send
 };
-
-
-
-
-
-// module.exports = function () {
-
-//   var mailData = _({}).assign(mailOptions, {
-
-//   }).value();
-
-
-
-
-//   transporter.sendMail(mailOptions, function (error, info) {
-//     if (error){
-//       return console.log(error);
-//     }
-//     console.log("Message sent: " + info.response);
-//   });
-// };

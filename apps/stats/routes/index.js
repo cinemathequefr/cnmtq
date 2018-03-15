@@ -4,9 +4,8 @@ const _ = require("lodash");
 const format = require("number-format.js");
 const queries = require("../db/queries");
 const config = require("../config");
-const sync = require("../services/sync");
+const sync = require("../services/sync"); // TEMPORAIRE
 
-// const testmail = require("../services/mail"); // TEST
 const router = new Router();
 
 moment.locale("fr", config.momentLocaleFr);
@@ -47,6 +46,18 @@ router.get("/day/:date", async function (ctx, next) {
   }
 });
 
+
+router.get("/testmail", async function (ctx, next) {
+  try {
+    var res = await require("../controllers/mail-report").daily();
+    ctx.body = res;
+  } catch (e) {
+    ctx.body = e;
+    console.log(e);
+  }
+});
+
+
 router.get("/sync", async function (ctx, next) {
   await sync();
   ctx.body = {
@@ -54,10 +65,6 @@ router.get("/sync", async function (ctx, next) {
     message: "Sychro OK"
   };
 });
-
-// router.get("/testmail", async function (ctx, next) {
-//   testmail();
-// });
 
 
 /** 

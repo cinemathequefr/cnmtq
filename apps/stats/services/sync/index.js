@@ -5,23 +5,6 @@ const config = require("../../config");
 const utils = require("../../utils");
 const db = require("../db");
 const remote = require("./remote");
-
-
-// const consolidate = require("consolidate");
-const mail = require("../mail");
-
-
-
-
-
-/*
-(async function () {
-  await sync();
-})();
-*/
-
-module.exports = sync;
-
   
 /**
  * sync
@@ -30,6 +13,9 @@ module.exports = sync;
  * @param opts {Object} : TODO (permet de spécifier : mise à jour ou récupération forcée de toutes les données historiques ; données passées et/ou futures)
  * @return
  */
+
+
+/*
 async function sync (opts) {
   var connectId;
   var fetchedTicketsCsv;
@@ -70,19 +56,18 @@ async function sync (opts) {
       updatedSeancesData
     );
 
-    var c = await mail.send(
-      "Synchronisation",
-      `<p>Une synchronisation a été effectuée à ${ moment().format("YYYY-MM-DD HH:mm") }.</p>`,
-      config.recipients
-    );
-
-    console.log(c);
-
-
+    // await mail.send(
+    //   "Fréquentation du ",
+    //   `<p>Une synchronisation a été effectuée à ${ moment().format("YYYY-MM-DD HH:mm") }.</p>`,
+    //   config.recipients
+    // );
     db.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
 
     console.log(`Séances passées: ${ fetchedSeancesDataSplit[0].length } séances ajoutées.`);
+
+
   } catch (e) {
     console.log(e);
   }
 }
+*/
