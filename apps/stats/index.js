@@ -6,7 +6,6 @@ const schedule = require("node-schedule");
 const router = require("./routes");
 const sync = require("./services/sync");
 const controllers = require("./controllers");
-// const mailReport = require("./controllers/mail-report");
 
 
 const syncJob = schedule.scheduleJob(
