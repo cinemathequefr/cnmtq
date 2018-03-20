@@ -47,18 +47,18 @@ router.get("/day/:date", async function (ctx, next) {
 });
 
 
-router.get("/testmail", async function (ctx, next) {
-  try {
-    var res = await require("../controllers/mail-report").daily();
-    ctx.body = res;
-  } catch (e) {
-    ctx.body = e;
-    console.log(e);
-  }
-});
+// router.get("/testmail", async function (ctx, next) {
+//   try {
+//     var res = await require("../controllers/mail-report").daily();
+//     ctx.body = res;
+//   } catch (e) {
+//     ctx.body = e;
+//     console.log(e);
+//   }
+// });
 
-router.get("/time", async function (ctx, next) {
-  ctx.body = moment().format();
+router.get("/info", async function (ctx, next) {
+  ctx.body = `${ moment().format() }\n${ JSON.stringify(config.recipients) }`;
 });
 
 

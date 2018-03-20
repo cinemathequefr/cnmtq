@@ -9,7 +9,7 @@ const controllers = require("./controllers");
 
 
 const syncJob = schedule.scheduleJob(
-  { hour: 22, minute: 15 }, //https://github.com/node-schedule/node-schedule#object-literal-syntax)
+  { hour: 22, minute: 15 },
   async function () {
     await sync();
     await controllers.mailReport.daily();
