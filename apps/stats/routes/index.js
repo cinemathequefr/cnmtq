@@ -12,6 +12,5 @@ router.get("/info", async function (ctx, next) {
   ctx.body = `${ moment().format() }\n${ JSON.stringify(config.mail.recipients) }`;
 });
 
-// router.get("/testmail", async function (ctx, next) {});
 
 module.exports = router;
