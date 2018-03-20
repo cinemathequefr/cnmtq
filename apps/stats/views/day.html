@@ -39,11 +39,10 @@
             <tr>
               <td class="seance-header">
                 <span class="title"><%= d.titre %></span>
-                <!--<span class="id-seance">(<%= d.idSeance %>)</span>-->
               </td>
               <td class="seance-header right bold"><%= d.tickets.compte %></td>
             </tr>
-            <% _.forEach(d.tickets.tarifCat2, function (v) { %>
+            <% _.forEach(d.tickets.tarifCat, function (v) { %>
             <tr>
               <td class="right"><%= v[0] %></td>
               <td class="right"><%= v[1] %></td>

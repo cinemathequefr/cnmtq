@@ -1,0 +1,18 @@
+html {
+  font-weight: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: #59b395;
+  font-family: Segoe UI, Calibri, Source Sans Pro, Helvetica, sans-serif;
+}
+
+h1 {
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: #111;
+  text-align: center;
+  padding-top: 50%;
+  transform: translateY(-50%);
+}

@@ -6,7 +6,10 @@ const server = module.exports = new Koa();
 
 const vhostApps = [ // Mapping vhosts/apps
   { vhost: "localhost", app: require("./apps/stats/index.js") },
-  { vhost: "stats.cnmtq.fr", app: require("./apps/stats/index.js") }
+  { vhost: "127.0.0.1", app: require("./apps/www/index.js") },
+  { vhost: "stats.cnmtq.fr", app: require("./apps/stats/index.js") },
+  { vhost: "cnmtq.fr", app: require("./apps/www/index.js") }
+  // , { vhost: "test.cnmtq.fr", app: require("./apps/stats2/index.js") } // TEMP
 ];
 
 server.use(compress({

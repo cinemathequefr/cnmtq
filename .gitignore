@@ -1,5 +1,7 @@
 node_modules/
 data/
 config/
-misc/
 npm-debug.log
+
+# temporaire
+stats_BAK/

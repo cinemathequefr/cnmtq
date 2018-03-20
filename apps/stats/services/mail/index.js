@@ -1,8 +1,8 @@
 const nodemailer = require("nodemailer");
 const config = require("../../config");
 
-// Configuration du transport 
-const transporter = nodemailer.createTransport(config.smtp);
+// Configuration du transport
+const transporter = nodemailer.createTransport(config.mail.smtp);
 
 /**
  * send
@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport(config.smtp);
  * @param subject { String } Sujet du message
  * @param plainText { String } Message au format texte brut
  * @param html { String } Message au format HTML
- * @param recipients { Array: String } Liste des adresses e-mail des destinataires
+ * @param recipients { Object: Array: String } Liste des adresses e-mail des destinataires, en valeur des clés `to` et `bcc`.
  * @return { Promise }
  */
 function send (subject, plainText, html, recipients) {
@@ -18,7 +18,7 @@ function send (subject, plainText, html, recipients) {
   html = html || "";
   return new Promise((resolve, reject) => {
     transporter.sendMail({
-      from: config.sender,
+      from: config.mailsender,
       to: recipients.to,
       bcc: recipients.bcc,
       subject: subject,
