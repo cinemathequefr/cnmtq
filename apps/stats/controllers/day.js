@@ -32,7 +32,6 @@ module.exports = async function (ctx, next) {
     ).value();
 
     return ctx.render("day", data);
-
   } catch (e) {
     console.log(e);
   }
