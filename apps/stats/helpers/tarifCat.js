@@ -14,7 +14,7 @@ function tarifCat (tarif, cats) {
   return _(
     _(tarif).map((v, k) => {
       return _.fromPairs([[
-        _(_.fromPairs(cats)).findKey(c => _.indexOf(c, parseInt(k, 10)) > -1) || "Autres",
+        _(_.fromPairs(cats)).findKey(c => _.indexOf(c, parseInt(k, 10)) > -1) || "Non identifié",
         v
       ]]);
     })
