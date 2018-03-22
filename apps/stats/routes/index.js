@@ -3,8 +3,6 @@ const moment = require("moment");
 const config = require("../config");
 const controllers = require("../controllers");
 
-// moment.locale("fr", config.momentLocaleFr);
-
 router.get("/day", controllers.day);
 router.get("/day/:date", controllers.day);
 

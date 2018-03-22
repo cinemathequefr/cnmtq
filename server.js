@@ -14,7 +14,6 @@ server.use(compress({
   flush: require("zlib").Z_SYNC_FLUSH
 }));
 
-
 // Global logger
 server.use(async function(ctx, next) {
   const start = new Date();
