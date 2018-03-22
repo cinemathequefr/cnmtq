@@ -11,6 +11,8 @@ module.exports = async function (ctx, next) {
 
   ctx.type = "text/html; charset=utf-8";
 
+  console.log(ctx.session);
+
   try {
     queryDate = ctx.params.date || db.map(d => d.date).max().value().substring(0, 10); // TODO: validation du paramètre
 
