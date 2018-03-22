@@ -5,10 +5,12 @@ const schedule = require("node-schedule");
 const sync = require("./services/sync");
 const moment = require("moment");
 const timezone = require("moment-timezone");
+const config = require("./config");
 const router = require("./routes");
 const controllers = require("./controllers");
 
 moment.tz.setDefault("Europe/Paris");
+moment.updateLocale("fr", config.momentLocaleFr);
 
 const syncJob = schedule.scheduleJob(
   { hour: 22, minute: 15 },
