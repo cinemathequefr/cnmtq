@@ -22,7 +22,6 @@ server.use(compress({
   flush: require("zlib").Z_SYNC_FLUSH
 }));
 
-
 // Global logger
 server.use(async function (ctx, next) {
   const start = new Date();
@@ -36,13 +35,8 @@ server.use(async function (ctx, next) {
 server.use(session(server));
 
 server.use(async function (ctx, next) {
-
-  ctx.session.hello = "Welcome here";
-
   const app = _(vhostApps).find({ vhost: ctx.hostname }).app; // See: https://github.com/koajs/examples/tree/master/vhost
   return await app ? compose(app.middleware).apply(this, [ctx, next]) : next(); // https://stackoverflow.com/questions/48380123/object-isnt-an-instance-of-koa-on-the-require-side
 });
-
-
 
 if (!module.parent) server.listen(process.env.PORT || 80);

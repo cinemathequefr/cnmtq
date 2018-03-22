@@ -9,9 +9,9 @@ module.exports = async function (ctx, next) {
   var queryDate;
   var data;
 
-  ctx.type = "text/html; charset=utf-8";
+  console.log(ctx.isAuthenticated());
 
-  console.log(ctx.session);
+  ctx.type = "text/html; charset=utf-8";
 
   try {
     queryDate = ctx.params.date || db.map(d => d.date).max().value().substring(0, 10); // TODO: validation du paramètre

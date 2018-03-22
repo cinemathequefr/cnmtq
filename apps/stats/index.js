@@ -1,6 +1,12 @@
 const Koa = require("koa");
 const serve = require("koa-static");
 const views = require("koa-views");
+
+const bodyParser = require("koa-bodyparser");
+const passport = require("koa-passport");
+
+// const localStrategy = require("passport-local").Strategy;
+
 const schedule = require("node-schedule");
 const sync = require("./services/sync");
 const moment = require("moment");
@@ -12,6 +18,8 @@ const controllers = require("./controllers");
 moment.tz.setDefault("Europe/Paris");
 moment.updateLocale("fr", config.momentLocaleFr);
 
+// console.log(localStrategy);
+
 const syncJob = schedule.scheduleJob(
   { hour: 22, minute: 15 },
   async function () {
@@ -21,6 +29,10 @@ const syncJob = schedule.scheduleJob(
 );
 
 const app = module.exports = new Koa();
+
+app.use(bodyParser());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(serve(__dirname + "/assets"));
 app.use(views(__dirname + "/views", { map: { html: "lodash" } }));
