@@ -24,9 +24,9 @@ body {
 
 .apptitle {
   position: absolute; top: 50%; transform: translateY(-50%);
-  color: #eee;
-  font-weight: 700; font-size: 1rem;
-  text-transform: uppercase;
+  color: #ddd;
+  font-weight: 600; font-size: 1rem;
+  /*text-transform: uppercase;*/
 }
 
 

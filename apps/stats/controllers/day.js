@@ -9,6 +9,9 @@ module.exports = async function (ctx, next) {
   var queryDate;
   var data;
 
+
+
+
   console.log(ctx.isAuthenticated());
 
   ctx.type = "text/html; charset=utf-8";

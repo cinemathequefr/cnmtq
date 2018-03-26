@@ -8,9 +8,12 @@
     <title><%= moment(date).format("dddd D MMMM YYYY") %></title>
   </head>
   <body>
+    <%= partials.header %>
+    <!--
     <div class="header-container">
       <div class="header"><div class="apptitle"></div></div>
     </div>
+    -->
     <div class="main">
       <h1><%= moment(date).format("dddd D MMMM YYYY") %></h1>
       <% if (data.length === 0) { %>
