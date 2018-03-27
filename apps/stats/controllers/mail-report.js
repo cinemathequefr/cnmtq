@@ -5,8 +5,8 @@ const consolidate = require("consolidate");
 const db = require("../services/db");
 const mail = require("../services/mail");
 const config = require("../config");
-const tarifCat = require("../helpers/tarifCat");
-const extendDataForViews = require("../helpers/extendDataForViews");
+const tarifCat = require("../lib/tarifCat");
+const extendDataForViews = require("../lib/extendDataForViews");
 
 /**
  * daily

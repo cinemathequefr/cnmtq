@@ -2,8 +2,8 @@ const _ = require("lodash");
 const moment = require("moment");
 const db = require("../services/db");
 const config = require("../config");
-const tarifCat = require("../helpers/tarifCat");
-const extendDataForViews = require("../helpers/extendDataForViews");
+const tarifCat = require("../lib/tarifCat");
+const extendDataForViews = require("../lib/extendDataForViews");
 
 module.exports = async function (ctx, next) {
   var queryDate;

@@ -48,7 +48,7 @@ app.use(bodyParser());
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(serve(__dirname + "/assets"));
+app.use(serve(__dirname + "/public"));
 
 app.use(
   views(__dirname + "/views", {
