@@ -9,10 +9,12 @@ module.exports = async function (ctx, next) {
   var queryDate;
   var data;
 
+  if (ctx.isAuthenticated() === false) {
+    ctx.status = 401;
+    return;
+  }
 
-
-
-  console.log(ctx.isAuthenticated());
+  // console.log(ctx.isAuthenticated());
 
   ctx.type = "text/html; charset=utf-8";
 

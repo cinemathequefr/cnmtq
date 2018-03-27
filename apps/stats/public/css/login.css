@@ -1,0 +1,46 @@
+
+.main {
+  width: 600px; max-width: 100%; overflow: hidden;
+  min-height: auto; height: 50vh; margin: 25vh auto;
+  box-sizing: border-box;
+}
+
+form {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+label {
+  display: block;
+  margin: 0; padding: 0;
+  text-align: left;
+}
+
+input {
+  display: block;
+  width: 100%;
+  font-size: 1rem; font-family: Segoe UI, Calibri, Helvetica, sans-serif;
+  box-sizing: border-box;
+}
+
+input[type=text], input[type=password] {
+  margin: 2px auto 18px auto; border: solid 1px #999; padding: 6px;
+  line-height: 1rem;
+}
+
+input[type=submit] {
+  height: 48px; 
+  border: 0; margin-top: 36px;
+  background-color: #66af63; 
+  font-weight: 600;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #53c44f; 
+}
+
+
+h1 {
+  /*text-align: center;*/
+}

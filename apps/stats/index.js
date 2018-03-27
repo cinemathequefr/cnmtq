@@ -1,10 +1,8 @@
 const Koa = require("koa");
 const serve = require("koa-static");
 const views = require("koa-views");
-
 const bodyParser = require("koa-bodyparser");
 const passport = require("koa-passport");
-const LocalStrategy = require("passport-local").Strategy;
 
 const schedule = require("node-schedule");
 const sync = require("./services/sync");
@@ -26,25 +24,9 @@ const syncJob = schedule.scheduleJob(
 
 const app = module.exports = new Koa();
 
-
-passport.use(new LocalStrategy(
-  function(username, password, done) {
-    User.findOne({ username: username }, function(err, user) {
-      if (err) { return done(err); }
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
-      }
-      if (!user.validPassword(password)) {
-        return done(null, false, { message: 'Incorrect password.' });
-      }
-      return done(null, user);
-    });
-  }
-));
-
-
-
+// Body parser + Passport
 app.use(bodyParser());
+require("./lib/auth");
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -57,4 +39,14 @@ app.use(
   })
 );
 
-app.use(router.routes());
+app.use(router.public.routes());
+
+// Protection
+app.use(async (ctx, next) => {
+  await next();
+  if (ctx.status === 401) {
+    ctx.redirect("/login");
+  }
+});
+
+app.use(router.private.routes());
