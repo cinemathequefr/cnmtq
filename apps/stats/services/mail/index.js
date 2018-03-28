@@ -27,6 +27,8 @@ function send (subject, plainText, html, recipients) {
       if (error) {
         reject(error);
       } else {
+        console.log("Mail envoyé.");
+        console.log(info);
         resolve(info);
       }
     });
