@@ -44,10 +44,8 @@ h1 {
 }
 
 
-
 .main {
   width: 1000px; max-width: 100%;
-  min-height: 80vh;
   margin: 24px auto 48px auto; padding: 12px;
   background-color: #fff;
   box-sizing: border-box;
