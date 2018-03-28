@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const moment = require("moment");
-const db = require("../services/db");
+const db = require("../services/db")("seances");
 const config = require("../config");
 const tarifCat = require("../lib/tarifCat");
 const extendDataForViews = require("../lib/extendDataForViews");

@@ -4,7 +4,8 @@ const request = require("request-promise"); // https://github.com/request/reques
 const csvtojson = require("csvtojson"); // https://github.com/Keyang/node-csvtojson
 const fs = require("fs");
 const config = require("../../config");
-const db = require("../db");
+const db = require("../db")("seances");
+// const db = require("../db");
 
 module.exports = {
   run: run
