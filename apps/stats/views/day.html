@@ -32,12 +32,17 @@
             <td class="right">Moyenne : entrées par séance</td>
             <td class="right"><%= format('# ##0,0', tickets / data.length) %></td>
           </tr>
+          <tr>
+            <td class="right">Moyenne : taux de remplissage</td>
+            
+            <td class="right"><%= format('# ##0,0%', (tickets / _(data).sumBy(d => d.salle.capacity)) * 100) %></td>
+          </tr>
         </table>
         <% _.forEach(data, function (d) { %>
         <div class="seance">
           <table>
             <tr>
-              <td colspan="2" class="sub"><%= moment(d.date).format("ddd D MMM HH[h]mm") %> - Salle <%= d.salle.code %></td>
+              <td colspan="2" class="sub"><%= moment(d.date).format("ddd D MMM HH[h]mm") %> - Salle <%= d.salle.code %> (<%= d.salle.capacity %>)</td>
             <tr>
             <tr>
               <td class="seance-header">

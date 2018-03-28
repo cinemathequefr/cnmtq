@@ -14,8 +14,6 @@ module.exports = async function (ctx, next) {
     return;
   }
 
-  // console.log(ctx.isAuthenticated());
-
   ctx.type = "text/html; charset=utf-8";
 
   try {
@@ -27,6 +25,7 @@ module.exports = async function (ctx, next) {
     })
     .map(
       d => _({}).assign(d, {
+        salle: _(d.salle).assign({ capacity: config.capacity[d.salle.id] }).value(),
         tickets: _(d.tickets).assign({ tarifCat: tarifCat(d.tickets.tarif, config.tarifCats) }).value()
       })
       .value()
