@@ -34,7 +34,6 @@
           </tr>
           <tr>
             <td class="right">Moyenne : taux de remplissage</td>
-            
             <td class="right"><%= format('# ##0,0%', (tickets / _(data).sumBy(d => d.salle.capacity)) * 100) %></td>
           </tr>
         </table>
