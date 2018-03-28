@@ -7,7 +7,9 @@ const controllers = require("../controllers");
 const publicRouter = new Router();
 const privateRouter = new Router();
 
-publicRouter.get("/", controllers.home);
+publicRouter.redirect("/", "/day");
+// publicRouter.get("/", controllers.home);
+
 publicRouter.get("/login", controllers.login);
 publicRouter.post(
   "/login",

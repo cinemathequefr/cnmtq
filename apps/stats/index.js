@@ -41,7 +41,7 @@ app.use(
 
 app.use(router.public.routes());
 
-// Protection
+// Protection des routes privées
 app.use(async (ctx, next) => {
   await next();
   if (ctx.status === 401) {

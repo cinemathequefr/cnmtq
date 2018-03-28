@@ -1,7 +1,6 @@
-
 .main {
-  width: 600px; max-width: 100%; overflow: hidden;
-  min-height: auto; height: 50vh; margin: 25vh auto;
+  width: 500px; max-width: 100%; overflow: hidden;
+  min-height: auto; height: 60vh; margin: 20vh auto;
   box-sizing: border-box;
 }
 
@@ -41,6 +40,9 @@ input[type=submit]:hover {
 }
 
 
-h1 {
-  /*text-align: center;*/
+@media screen and (max-width: 39.9375em) {
+  .main {
+    width: 95%;
+    height: 95vh; margin: 2.5vh auto;
+  }
 }
