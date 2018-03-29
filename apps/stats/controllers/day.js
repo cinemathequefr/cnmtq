@@ -5,7 +5,7 @@ const config = require("../config");
 const tarifCat = require("../lib/tarifCat");
 const extendDataForViews = require("../lib/extendDataForViews");
 
-module.exports = async function (ctx, next) {
+module.exports = async function(ctx, next) {
   var queryDate;
   var data;
 
@@ -17,25 +17,35 @@ module.exports = async function (ctx, next) {
   ctx.type = "text/html; charset=utf-8";
 
   try {
-    queryDate = ctx.params.date || db.map(d => d.date).max().value().substring(0, 10); // TODO: validation du paramètre
+    queryDate =
+      ctx.params.date ||
+      db
+        .map(d => d.date)
+        .max()
+        .value()
+        .substring(0, 10); // TODO: validation du paramètre
 
     data = db
-    .filter(d => {
-      return d.date.substring(0, 10) === queryDate;
-    })
-    .map(
-      d => _({}).assign(d, {
-        salle: _(d.salle).assign({ capacity: config.capacity[d.salle.id] }).value(),
-        tickets: _(d.tickets).assign({ tarifCat: tarifCat(d.tickets.tarif, config.tarifCats) }).value()
+      .filter(d => {
+        return d.date.substring(0, 10) === queryDate;
       })
-      .value()
-    )
-    .value();
+      .map(d =>
+        _({})
+          .assign(d, {
+            salle: _(d.salle)
+              .assign({ capacity: config.capacity[d.salle.id] })
+              .value(),
+            tickets: _(d.tickets)
+              .assign({ tarifCat: tarifCat(d.tickets.tarif, config.tarifCats) })
+              .value()
+          })
+          .value()
+      )
+      .value();
 
-    data = _({}).assign(
-      extendDataForViews(data),
-      { date: queryDate }
-    ).value();
+    data = _({})
+      .assign(extendDataForViews(data), { date: queryDate })
+      .value();
 
     return ctx.render("day", data);
   } catch (e) {

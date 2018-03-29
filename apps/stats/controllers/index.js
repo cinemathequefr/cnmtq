@@ -3,5 +3,8 @@ module.exports = {
   day: require("./day"),
   login: require("./login"),
   logout: require("./logout"),
-  mailReport: require("./mail-report")
+  mailReport: require("./mail-report"),
+  api: {
+    seances: require("./api/seances")
+  }
 };

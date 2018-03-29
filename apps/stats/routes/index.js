@@ -7,10 +7,17 @@ const controllers = require("../controllers");
 const publicRouter = new Router();
 const privateRouter = new Router();
 
-publicRouter.redirect("/", "/day");
-// publicRouter.get("/", controllers.home);
+// privateRouter.use((ctx, next) => {
+//   if (ctx.isAuthenticated() === false) {
+//     ctx.status === 401;
+//     return;
+//   }
+//   next();
+// });
 
+publicRouter.redirect("/", "/day");
 publicRouter.get("/login", controllers.login);
+
 publicRouter.post(
   "/login",
   passport.authenticate("local", {
@@ -20,8 +27,7 @@ publicRouter.post(
 );
 
 publicRouter.get("/logout", controllers.logout);
-privateRouter.get("/day", controllers.day);
-privateRouter.get("/day/:date", controllers.day);
+privateRouter.get("/day/:date?", controllers.day);
 
 privateRouter.get("/info", async function (ctx, next) {
   if (ctx.isAuthenticated() === false) {
@@ -32,27 +38,17 @@ privateRouter.get("/info", async function (ctx, next) {
 });
 
 
-privateRouter.get("/api/v1/seances", async (ctx, next) => {
-  if (ctx.isAuthenticated() === false) {
-    ctx.status = 401;
-    return;
-  }
-  ctx.body = JSON.stringify(ctx.request.query);
-});
+// TODO
+privateRouter.get("/api/seances", controllers.api.seances);
+// privateRouter.get("/api/seances", async (ctx, next) => {
+//   if (ctx.isAuthenticated() === false) {
+//     ctx.status = 401;
+//     return;
+//   }
 
+//   ctx.body = JSON.stringify(ctx.request.query);
+// });
 
-// Utiliser cette route pour lancer manuellemet l'envoi du rapport quotidien
-privateRouter.get("/sendmail", async function (ctx, next) {
-/*
-  try {
-    console.log(
-      await controllers.mailReport.daily()
-    );
-  } catch (e) {
-  	console.log(e);
-  }
-*/
-});
 
 module.exports = {
   public: publicRouter,

@@ -49,6 +49,7 @@ async function run () {
 
       db.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
 
+      // TODO: utiliser la méthode `write` de lowdb (elle devrait être est asynchrone) ?
       await writeJsonFile(
         __dirname + "/../../data/seances.json",
         updatedSeancesData

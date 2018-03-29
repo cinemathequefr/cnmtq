@@ -35,7 +35,7 @@ app.use(serve(__dirname + "/public"));
 app.use(
   views(__dirname + "/views", {
     map: { html: "lodash" },
-    options: { partials: { header: "partials/header"} }
+    options: { partials: { header: "partials/header" } }
   })
 );
 
