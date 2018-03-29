@@ -1,11 +1,10 @@
-const _ = require("lodash");
+        const _ = require("lodash");
 const moment = require("moment");
 const request = require("request-promise"); // https://github.com/request/request-promise
 const csvtojson = require("csvtojson"); // https://github.com/Keyang/node-csvtojson
 const fs = require("fs");
 const config = require("../../config");
 const db = require("../db")("seances");
-// const db = require("../db");
 
 module.exports = {
   run: run
@@ -53,7 +52,7 @@ async function run () {
         updatedSeancesData
       );
 
-      db.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
+     db.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
 
       console.log(`Synchronisation à ${ moment().format() } : ${ fetchedSeancesDataSplit[0].length } séances ajoutées.`);
       resolve();

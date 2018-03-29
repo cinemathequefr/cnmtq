@@ -1,3 +1,7 @@
 const sync = require("../services/sync");
 
-sync.run();
+(async () => {
+  await sync.run();
+  console.log("Finished");
+})();
+

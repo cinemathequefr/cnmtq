@@ -32,6 +32,15 @@ privateRouter.get("/info", async function (ctx, next) {
 });
 
 
+privateRouter.get("/api/v1/seances", async (ctx, next) => {
+  if (ctx.isAuthenticated() === false) {
+    ctx.status = 401;
+    return;
+  }
+  ctx.body = JSON.stringify(ctx.request.query);
+});
+
+
 // Utiliser cette route pour lancer manuellemet l'envoi du rapport quotidien
 privateRouter.get("/sendmail", async function (ctx, next) {
 /*
