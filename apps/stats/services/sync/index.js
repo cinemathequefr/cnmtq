@@ -47,14 +47,14 @@ async function run () {
       fetchedSeancesDataSplit = splitSeances(fetchedSeancesData); // => [[passées], [futures]]
       updatedSeancesData = mergeSeances(existingSeancesData[0], fetchedSeancesDataSplit[0]);
 
+      db.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
+
       await writeJsonFile(
         __dirname + "/../../data/seances.json",
         updatedSeancesData
       );
 
-     db.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
-
-      console.log(`Synchronisation à ${ moment().format() } : ${ fetchedSeancesDataSplit[0].length } séances ajoutées.`);
+      console.log(`${ moment().format() } : Synchronisation terminée, ${ fetchedSeancesDataSplit[0].length } séances ajoutées ou réécrites.`);
       resolve();
 
     } catch (e) {
