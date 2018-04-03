@@ -9,9 +9,11 @@ module.exports = async function(ctx, next) {
     return;
   }
 
-  const query = ctx.request.query;
+  const query = objectToLowerCase(ctx.request.query);
+
   const dateFrom =
     validateISODateString(query.datefrom) || config.dateLowerLimit;
+
   const dateTo = validateISODateString(query.dateto) || config.dateUpperLimit;
 
   const aggregateFn = {
@@ -34,8 +36,29 @@ module.exports = async function(ctx, next) {
     monthfold: d => moment(d.date).format("M")
   };
 
-  const aggregateKey =
-    _.keys(aggregateFn).find(d => d === query.aggregate) || null;
+  ctx.type = "application/json; charset=utf-8";
+
+  // Checks that the `aggregate` parameter, if present, belongs to the list of aggregation functions
+  try {
+    var aggregateKey = query.aggregate;
+    if (aggregateKey) {
+      const aggregateKey = _.keys(aggregateFn).find(d => d === query.aggregate);
+
+      if (!aggregateKey)
+        throw `Invalid aggregate parameter ${
+          query.aggregate
+        }. Accepted values are: ${_(aggregateFn)
+          .map((v, k) => k)
+          .value()
+          .join("|")} `;
+
+    }
+  } catch (e) {
+    ctx.status = 400;
+    ctx.body = JSON.stringify({ error: e });
+    return;
+  }
+
   var data = db.getState();
 
   data = _(data)
@@ -52,8 +75,8 @@ module.exports = async function(ctx, next) {
     })
     .value();
 
-  ctx.type = "application/json; charset=utf-8";
   ctx.body = data;
+  return;
 };
 
 /**
@@ -130,8 +153,8 @@ function aggregateSeances(seances) {
         .mapValues(function(c) {
           return _(c)
             .assign({
-              moyEntreesSeance: c.entrees / c.seances,
-              tauxRemplissage: c.entrees / c.capacite
+              moyEntreesSeance: round(c.entrees / c.seances, 4),
+              tauxRemplissage: round(c.entrees / c.capacite, 4)
             })
             .value();
         })
@@ -158,4 +181,30 @@ function createTimeSlotFn(ts) {
     if (!found) o = _.last(mts); // If the input time is before the first slot, then it goes to the last (for late night shows)
     return o.format("HH:mm");
   };
+}
+
+/**
+ * round
+ * Round a number to the given decimal places
+ * Note: the `toFixed` method returns a string
+ * @param value {number} Value to be rounded
+ * @param decimals {integer} Decimal places
+ * @return {number}
+ */
+function round(value, decimals) {
+  return Number(Math.round(value + "e" + decimals) + "e-" + decimals);
+}
+
+/**
+ * objectToLowerCase
+ * Shallow conversion of the keys/string values of an object to lowercase.
+ * Used to format query parameters (given as an object).
+ * @param o {object}
+ * @return o {object}
+ */
+function objectToLowerCase(o) {
+  return _(o)
+    .mapKeys((v, k) => k.toLowerCase())
+    .mapValues((v, k) => (typeof v === "string" ? v.toLowerCase() : v))
+    .value();
 }

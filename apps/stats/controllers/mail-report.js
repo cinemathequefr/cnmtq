@@ -11,13 +11,14 @@ const extendDataForViews = require("../lib/extendDataForViews");
 /**
  * daily
  * Composition et envoi par mail du rapport quotidien de fréquentation
- * @param queryDate { String } YYYY-MM-DD. Par défaut, cherche la date de données séances la plus récente.
+ * @param queryDate { String } YYYY-MM-DD. Par défaut, date courante.
  * @return { Promise }
  */
 async function daily(queryDate) {
   var data;
   var html;
 
+  /*
   queryDate =
     queryDate ||
     db
@@ -25,6 +26,9 @@ async function daily(queryDate) {
       .max()
       .value()
       .substring(0, 10);
+  */
+
+  queryDate = moment();
 
   data = db
     .filter(d => {
@@ -43,6 +47,11 @@ async function daily(queryDate) {
         .value()
     )
     .value();
+
+  if (data.length === 0) {
+    console.log(`${moment().format()} : Aucune séance trouvée pour ce jour : envoi annulé.`);
+    return;
+  } 
 
   data = _({})
     .assign(extendDataForViews(data), { date: queryDate })

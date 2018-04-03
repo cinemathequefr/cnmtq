@@ -37,17 +37,7 @@ privateRouter.get("/info", async function (ctx, next) {
   ctx.body = `${ moment().format() }\n${ JSON.stringify(config.mail.recipients) }`;
 });
 
-
-// TODO
 privateRouter.get("/api/seances", controllers.api.seances);
-// privateRouter.get("/api/seances", async (ctx, next) => {
-//   if (ctx.isAuthenticated() === false) {
-//     ctx.status = 401;
-//     return;
-//   }
-
-//   ctx.body = JSON.stringify(ctx.request.query);
-// });
 
 
 module.exports = {
