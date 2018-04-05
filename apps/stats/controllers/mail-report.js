@@ -28,7 +28,7 @@ async function daily(queryDate) {
       .substring(0, 10);
   */
 
-  queryDate = moment();
+  queryDate = moment().format("YYYY-MM-DD");
 
   data = db
     .filter(d => {
