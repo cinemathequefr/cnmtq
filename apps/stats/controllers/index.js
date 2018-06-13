@@ -1,10 +1,11 @@
 module.exports = {
-  home: require("./home"),
+  api: {
+    seances: require("./api/seances")
+  },
   day: require("./day"),
+  home: require("./home"),
   login: require("./login"),
   logout: require("./logout"),
   mailReport: require("./mail-report"),
-  api: {
-    seances: require("./api/seances")
-  }
+  progression: require("./progression")
 };

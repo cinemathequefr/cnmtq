@@ -10,14 +10,25 @@ module.exports = extendDataForViews;
  * Original data are output as the value of a `data` key
  * This function to be used in controllers
  * @param data { Collection }
- * @return { Object } 
+ * @return { Object }
  */
-function extendDataForViews (data) {
+function extendDataForViews(data) {
   return _({})
-  .assign({
-    moment: moment,
-    format: format,
-    data: data
-  })
-  .value();
+    .assign({
+      moment: moment,
+      format: format,
+      data: data,
+      signed: signed
+    })
+    .value();
+}
+
+/**
+ * signed
+ * Renvoie un nombre sous forme de chaîne signée (précédée du signe + ou -, sauf pour 0).
+ * @param n {number|string}
+ * @return {string}
+ */
+function signed(n) {
+  return `${parseInt(n) > 0 ? "+" : ""}${n}`;
 }

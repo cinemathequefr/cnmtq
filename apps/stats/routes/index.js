@@ -29,6 +29,11 @@ publicRouter.post(
 publicRouter.get("/logout", controllers.logout);
 privateRouter.get("/day/:date?", controllers.day);
 
+privateRouter.get("/progression", controllers.progression);
+
+
+
+
 privateRouter.get("/info", async function (ctx, next) {
   if (ctx.isAuthenticated() === false) {
     ctx.status = 401;

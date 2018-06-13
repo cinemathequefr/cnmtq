@@ -38,9 +38,7 @@ a:link, a:hover, a:active, a:visited {
 .apptitle {
   position: absolute; top: 50%; transform: translateY(-50%);
   font-weight: 600; font-size: 1rem;
-  /*text-transform: uppercase;*/
 }
-
 
 h1 {
   font-size: 1.25rem;
@@ -64,7 +62,7 @@ table {
   width: 100%; max-width: 700px; border-collapse: collapse; margin: 0 0 24px 0;
 }
 
-td {
+td, th  {
   border: solid 1px #333; padding: 4px;
 }
 
@@ -78,10 +76,15 @@ td.sub {
 
 }
 
+th {
+  font-weight: 600;
+}
+
 .title { font-weight: 700; }
 .id-seance { font-size: 1rem; }
 
 .right { text-align: right; }
+.center { text-align: center; }
 .bold { font-weight: 700; }
 
 
