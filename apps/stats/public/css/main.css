@@ -6,7 +6,7 @@ body {
   margin: 0;
   /*background-color: #016666;*/
   background-color: #b4bf9f;
-  font-family: Segoe UI, Calibri, Helvetica, sans-serif;
+  font-family: IBM Plex Sans, Segoe UI, Calibri, Helvetica, sans-serif;
 }
 
 a:link, a:hover, a:active, a:visited {
@@ -86,6 +86,7 @@ th {
 .right { text-align: right; }
 .center { text-align: center; }
 .bold { font-weight: 700; }
+.small { font-size: 0.85em; }
 
 
 .id-seance {
