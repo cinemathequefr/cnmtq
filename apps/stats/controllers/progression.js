@@ -32,7 +32,6 @@ module.exports = async function(ctx, next) {
     var data = _([data0, data1])
       .unzip()
       .map(_.flatten)
-      // .map(d => _.flatten(d))
       .map(d => {
         d.push((d[1] - d[3]) / d[3]);
         return d;
@@ -49,8 +48,6 @@ module.exports = async function(ctx, next) {
       .value();
 
     data = _({}).assign(extendDataForViews(data), { yoy: totalYoy }).value();
-    console.log(data);
-    // data = extendDataForViews(data);
 
     return ctx.render("progression", data);
   } catch (e) {
