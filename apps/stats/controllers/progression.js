@@ -7,7 +7,11 @@ const extendDataForViews = require("../lib/extendDataForViews");
 const seances = require("../lib/seances");
 
 module.exports = async function(ctx, next) {
-  // var queryDate; // Mois (yyyy-mm)
+  var data;
+  var footRows;
+  var refMonth;
+  var maxMonth;
+  var variable = "entrees";
 
   if (ctx.isAuthenticated() === false) {
     ctx.status = 401;
@@ -17,65 +21,93 @@ module.exports = async function(ctx, next) {
   ctx.type = "text/html; charset=utf-8";
 
   try {
-    var yoy0 = yoy(0);
-    var data0 = _(seances(db.getState(), yoy0.start, yoy0.end, "month"))
-      .map((v, k) => [k, v.global.entrees])
+    maxMonth = moment()
+      .startOf("month")
+      .subtract(1, "months")
+      .endOf("month");
+
+    refMonth = ctx.request.query.date
+      ? moment(ctx.request.query.date).endOf("month")
+      : maxMonth;
+
+    if (maxMonth.isBefore(refMonth)) refMonth = maxMonth;
+
+    data = seances(
+      db.getState(),
+      refMonth
+        .clone()
+        .subtract(23, "months")
+        .startOf("month"),
+      refMonth,
+      "month"
+    );
+
+    data = _(data)
+      .mapValues(d => d.global[variable])
+      .toPairs()
       .sortBy(d => d[0])
       .value();
 
-    var yoy1 = yoy(1);
-    var data1 = _(seances(db.getState(), yoy1.start, yoy1.end, "month"))
-      .map((v, k) => [k, v.global.entrees])
-      .sortBy(d => d[0])
-      .value();
+    if (data.length < 24)
+      throw "Les données disponibles ne sont pas suffisantes pour construire ce rapport.";
 
-    var data = _([data0, data1])
+    data = _(data)
+      .chunk(12)
       .unzip()
       .map(_.flatten)
-      .map(d => {
-        d.push((d[1] - d[3]) / d[3]);
-        return d;
+      .map(d => [moment(d[2]).month(), d[3], d[1]])
+      .value();
+
+    footRows = _([])
+      .concat([
+        ["Année glissante", _(data).sumBy(d => d[1]), _(data).sumBy(d => d[2])]
+      ])
+      .value();
+
+    // Retire les données d'avant le mois de janvier
+    data = _(data)
+      .thru(_data => {
+        var a = [];
+        var found = false;
+        _(_data).forEach(d => {
+          found = found || d[0] === 0;
+          if (found) a.push(d);
+        });
+        return a;
       })
       .value();
 
-    var totalYoy = [_.sumBy(data, "1"), _.sumBy(data, "3")];
-
-    // Après avoir calculé le total en année glissante, on élimine les données antérieures à l'année de référence, qu'on n'utilisera plus.
-    // On calcule pour cela l'année de référence.
-    var maxYear = moment(_(data).maxBy(d => moment(d[0]).year())[0]).year();
-    data = _(data)
-      .filter(d => moment(d[0]).year() === maxYear)
+    footRows = _(footRows)
+      .concat([["Cumul", _(data).sumBy(d => d[1]), _(data).sumBy(d => d[2])]])
+      .reverse()
       .value();
 
-    data = _({}).assign(extendDataForViews(data), { yoy: totalYoy }).value();
 
-    return ctx.render("progression", data);
+
+
+    data = _(data)
+      .map(d => [
+        _.upperFirst(
+          moment()
+            .month(d[0])
+            .format("MMMM")
+        ),
+        d[1],
+        d[2]
+      ])
+      .concat(footRows)
+      .map(d =>
+        _(d)
+          .concat([(d[1] - d[2]) / d[2]])
+          .value()
+      )
+      .value();
+
+    return ctx.render(
+      "progression",
+      extendDataForViews(data, { refMonth: refMonth })
+    );
   } catch (e) {
     console.log(e);
   }
 };
-
-/**
- * yoy (year-on-year)
- * Obtention des dates de début et fin d'année glissante jusqu'à la fin du mois échu (par rapport à la date courante)
- * TODO: pouvoir passer en paramètre la date servant de référence (qu'elle ne soit pas forcément la date courante)
- * @param negOffsetY {integer} Obtention de la même période pour l'année n moins offset.
- * @return {Object: Moment, Moment}
- */
-function yoy(negOffsetY) {
-  negOffsetY = Math.abs(negOffsetY || 0);
-  var ref = moment()
-    .startOf("month")
-    .subtract(1, "months")
-    .endOf("month");
-  var end = ref.clone().subtract(negOffsetY, "years");
-  var start = ref
-    .clone()
-    .subtract(negOffsetY + 1, "years")
-    .add(1, "day")
-    .startOf("day");
-  return {
-    start: start,
-    end: end
-  };
-}
