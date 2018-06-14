@@ -82,9 +82,6 @@ module.exports = async function(ctx, next) {
       .reverse()
       .value();
 
-
-
-
     data = _(data)
       .map(d => [
         _.upperFirst(

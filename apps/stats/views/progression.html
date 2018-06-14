@@ -6,18 +6,13 @@
     <meta name="robots" content="noindex, nofollow">
     <link href="https://fonts.googleapis.com/css?family=Work Sans|Roboto|IBM+Plex+Sans" rel="stylesheet"> 
     <link rel="stylesheet" href="../css/main.css">
-    <% 
-      var y1 = moment(_.last(data)[0]).format("YYYY");
-      var y2 = moment(_.last(data)[2]).format("YYYY");
-      var m = moment(_.last(data)[0]);
-      var compteMois = data.length;
-    %>
-    <title>Fréquentation en salles <%= y1 %></title>
+    <title>Fréquentation en salles</title>
   </head>
   <body>
     <%= partials.header %>
     <div class="main">
-      <h1>Fréquentation en salles <%= y1 %></h1>
+      <h1>Fréquentation en salles <%= refMonth.year() %></h1>
+      <h2>Jusqu'à <%= refMonth.format("MMM YYYY") %> inclus</h2>
       <p>(Nombre d'entrées)</p>
       <% if (data.length === 0) { %>
         <div class="seance">Pas de données disponibles.</div>
@@ -25,34 +20,20 @@
         <table>
           <tr>
             <th style="width:40%;"></th>
-            <th style="width:20%;"><%= y1 %></th>
-            <th style="width:20%;"><%= moment(_.last(data)[2]).format("YYYY") %></th>
-            <th style="width:20%;">Évolution de <%= y2 %> à <%= y1 %></th>
+            <th style="width:20%;"><%= refMonth.year() %></th>
+            <th style="width:20%;"><%= refMonth.year() - 1 %></th>
+            <th style="width:20%;">Évol. <%= refMonth.year() - 1 %>-<%= refMonth.year() %></th>
           </tr>
           <% _.forEach(data, function (d) { %>
             <tr>
-              <td class="center"><%= _.upperFirst(moment(d[0]).format("MMMM")) %></td>
+              <td class="center"><%= d[0] %></td>
               <td class="right"><%= format("# ###.", d[1]) %></td>
-              <td class="right"><%= format("# ###.", d[3]) %></td>
-              <td class="right"><%= signed(format("##,#0%", d[4] * 100)) %></td>
+              <td class="right"><%= format("# ###.", d[2]) %></td>
+              <td class="right"><%= signed(format("##,#0%", d[3] * 100)) %></td>
             </tr>
           <% }); %>
-          <tr>
-            <% var s1, s2; %>
-            <td class="center">Cumul</td>
-            <td class="right"><%= format("# ###.", s1 = _.sumBy(data, "1")) %></td>
-            <td class="right"><%= format("# ###.", s2 =_.sumBy(data, "3")) %></td>
-            <td class="right"><%= signed(format("##,#0%", ((s1 - s2) / s2) * 100)) %></td>
-          </tr>
-          <tr>
-            <td class="center">Année glissante</td>
-            <td class="right"><%= format("# ###.", yoy[0]) %></td>
-            <td class="right"><%= format("# ###.",yoy[1]) %></td>
-            <td class="right"><%= signed(format("##,#0%", ((yoy[0] - yoy[1]) / yoy[1]) * 100)) %></td>
-          </tr>
         </table>
-
-        <p class="small">Cumul&nbsp;: total sur les <%= compteMois %> premiers mois de l'année n.<br>Année glissante&nbsp;: total sur un an, de <%= m.clone().subtract(11, "months").format("MMM") %> année n-1 à <%= m.format("MMM") %> année n.</p>
+        <p class="small">Cumul&nbsp;: total sur les mois échus de l'année n.<br>Année glissante&nbsp;: total les 12 derniers mois.</p>
 
 
       <% } %>

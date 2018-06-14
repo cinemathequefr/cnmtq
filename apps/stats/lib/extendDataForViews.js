@@ -10,9 +10,10 @@ module.exports = extendDataForViews;
  * Original data are output as the value of a `data` key
  * This function to be used in controllers
  * @param data { Collection }
+ * @param obj { Object } Any extra object that may be useful for the view
  * @return { Object }
  */
-function extendDataForViews(data) {
+function extendDataForViews(data, obj) {
   return _({})
     .assign({
       moment: moment,
@@ -20,6 +21,7 @@ function extendDataForViews(data) {
       data: data,
       signed: signed
     })
+    .assign(obj || {})
     .value();
 }
 
