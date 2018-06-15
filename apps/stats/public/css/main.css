@@ -96,3 +96,10 @@ th {
 .id-seance {
   color: #195916;
 }
+
+
+ul.menu {
+  display: block; margin: 0; padding: 0;
+}
+
+ul.menu a:link, ul.menu a:visited { text-decoration: underline; }

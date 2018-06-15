@@ -25,6 +25,8 @@ module.exports = async function(ctx, next) {
         .value()
         .substring(0, 10); // TODO: validation du paramètre
 
+
+    // TODO: obtenir les données par lib\seances.js (comme le fait controller\progression.js)
     data = db
       .filter(d => {
         return d.date.substring(0, 10) === queryDate;

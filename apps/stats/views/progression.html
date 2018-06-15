@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <link href="https://fonts.googleapis.com/css?family=Work Sans|Roboto|IBM+Plex+Sans" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans" rel="stylesheet"> 
     <link rel="stylesheet" href="../css/main.css">
-    <title>Fréquentation en salles</title>
+    <title>Fréquentation en salles <%= refMonth.year() %> - StatsCF</title>
   </head>
   <body>
     <%= partials.header %>
     <div class="main">
       <h1>Fréquentation en salles <%= refMonth.year() %></h1>
-      <h2>Jusqu'à <%= refMonth.format("MMM YYYY") %> inclus</h2>
+      <h2>Par mois, jusqu'à <%= refMonth.format("MMM YYYY") %> inclus</h2>
       <p>(Nombre d'entrées)</p>
       <% if (data.length === 0) { %>
         <div class="seance">Pas de données disponibles.</div>
@@ -27,15 +27,12 @@
           <% _.forEach(data, function (d) { %>
             <tr>
               <td class="center"><%= d[0] %></td>
-              <td class="right"><%= format("# ###.", d[1]) %></td>
-              <td class="right"><%= format("# ###.", d[2]) %></td>
+              <td class="right"><%= d[1] %></td>
+              <td class="right"><%= d[2] %></td>
               <td class="right"><%= signed(format("##,#0%", d[3] * 100)) %></td>
             </tr>
           <% }); %>
         </table>
-        <p class="small">Cumul&nbsp;: total sur les mois échus de l'année n.<br>Année glissante&nbsp;: total les 12 derniers mois.</p>
-
-
       <% } %>
     </div>
   </body>
