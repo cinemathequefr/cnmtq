@@ -1,4 +1,4 @@
-        const _ = require("lodash");
+const _ = require("lodash");
 const moment = require("moment");
 const request = require("request-promise"); // https://github.com/request/request-promise
 const csvtojson = require("csvtojson"); // https://github.com/Keyang/node-csvtojson
