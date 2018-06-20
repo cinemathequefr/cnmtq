@@ -106,31 +106,63 @@ input {
 
 a:link, a:hover, a:active, a:visited {
   color: inherit;
-  text-decoration: none;
 }
+
+a:link, a:visited { text-decoration: none; }
+a:hover, a:active { text-decoration: underline; }
+
 
 .header-container {
   position: relative;
-  width: 100%; /*height: 72px;*/height: 56px;
+  width: 100%;
+  font-size: 0.938rem; font-weight: 400;
   background-color: #eee; color: #222;
   border-bottom: solid 2px #999;
 }
 
 .header {
-  position: relative;
-  /*
-  width: 1000px; max-width: 100%;
-  margin: 0 auto;
-  */
-  padding: 8px;
+  display: flex;
+  width: 100%; height: 56px;
+  flex-direction: row;
+  align-items: center;
   box-sizing: border-box;
 }
 
+.header > div {
+  flex: 1;
+  padding: 0 12px;
+}
+
+.header > div:nth-child(2) {
+  text-align: right;
+}
+
+.apptitle-sm {
+  display: inline-block;
+  padding-right: 12px;
+  color: #50974e;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+ul.menu {
+  display: inline-block;
+  margin: 0; padding: 0;
+  list-style-type: none;
+}
+
+
+ul.menu li {
+  display: inline-block;
+  padding: 0 2px;
+}
+/*
 .logout {
   position: absolute;
   top: 4px; right: 0;
   font-size: 0.85rem;
 }
+*/
 
 .apptitle {
   position: absolute; top: 50%; transform: translateY(-50%);
@@ -193,31 +225,4 @@ th {
 .id-seance {
   color: #195916;
 }
-
-
-ul.menu {
-  display: block; margin: 0; padding: 0;
-}
-
-ul.menu a:link, ul.menu a:visited { text-decoration: underline; }
-
-
-.headroom {
-    will-change: transform;
-    -webkit-transition: -webkit-transform 200ms linear;
-    transition: -webkit-transform 200ms linear;
-    -o-transition: transform 200ms linear;
-    transition: transform 200ms linear;
-    transition: transform 200ms linear, -webkit-transform 200ms linear;
-}
-.headroom--pinned {
-  position: fixed;
-
-}
-.headroom--unpinned {
-  position: relative;
-}
-
-
-
 
