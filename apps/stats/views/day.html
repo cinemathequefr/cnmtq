@@ -4,17 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans" rel="stylesheet"> 
     <link rel="stylesheet" href="../css/main.css">
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/jquery.eager-navbar.min.js"></script>
+    <script src="../js/main.js"></script>
     <title><%= moment(date).format("dddd D MMMM YYYY") %></title>
   </head>
   <body>
     <%= partials.header %>
-    <!--
-    <div class="header-container">
-      <div class="header"><div class="apptitle"></div></div>
-    </div>
-    -->
     <div class="main">
       <h1><%= moment(date).format("dddd D MMMM YYYY") %></h1>
       <% if (data.length === 0) { %>
