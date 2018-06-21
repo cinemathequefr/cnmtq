@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const moment = require("moment");
-const db = require("../services/db")("seances");
+const dbSeances = require("../services/db")("seances");
 const config = require("../config");
 const tarifCat = require("../lib/tarifCat");
 const extendDataForViews = require("../lib/extendDataForViews");
@@ -19,7 +19,7 @@ module.exports = async function(ctx, next) {
   try {
     queryDate =
       ctx.params.date ||
-      db
+      dbSeances
         .map(d => d.date)
         .max()
         .value()
@@ -27,7 +27,7 @@ module.exports = async function(ctx, next) {
 
 
     // TODO: obtenir les données par lib\seances.js (comme le fait controller\progression.js)
-    data = db
+    data = dbSeances
       .filter(d => {
         return d.date.substring(0, 10) === queryDate;
       })

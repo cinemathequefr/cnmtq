@@ -7,5 +7,6 @@ module.exports = {
   login: require("./login"),
   logout: require("./logout"),
   mailReport: require("./mail-report"),
-  progression: require("./progression")
+  progression: require("./progression"),
+  preventes: require("./preventes")
 };

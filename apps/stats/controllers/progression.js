@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const moment = require("moment");
-const db = require("../services/db")("seances");
+const dbSeances = require("../services/db")("seances");
 const config = require("../config");
 const tarifCat = require("../lib/tarifCat");
 const extendDataForViews = require("../lib/extendDataForViews");
@@ -33,7 +33,7 @@ module.exports = async function(ctx, next) {
     if (maxMonth.isBefore(refMonth)) refMonth = maxMonth;
 
     data = seances(
-      db.getState(),
+      dbSeances.getState(),
       refMonth
         .clone()
         .subtract(23, "months")

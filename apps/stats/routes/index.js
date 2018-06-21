@@ -28,8 +28,8 @@ publicRouter.post(
 
 publicRouter.get("/logout", controllers.logout);
 privateRouter.get("/day/:date?", controllers.day);
-
 privateRouter.get("/progression", controllers.progression);
+privateRouter.get("/preventes", controllers.preventes);
 
 
 

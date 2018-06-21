@@ -4,11 +4,150 @@ const request = require("request-promise"); // https://github.com/request/reques
 const csvtojson = require("csvtojson"); // https://github.com/Keyang/node-csvtojson
 const fs = require("fs");
 const config = require("../../config");
-const db = require("../db")("seances");
+const dbSeances = require("../db")("seances");
+const dbFuture = require("../db")("future");
 
 module.exports = {
+  query: query,
+  past: past,
+  future: future,
   run: run
 };
+
+/**
+ * future
+ * Exécute une requête sur les séances futures et écrit le fichier future.json
+ */
+async function future() {
+  var currentDate = moment().startOf("day"); // On capture la date courante
+  var dateFrom;
+  var dateTo;
+  var fetchedSeancesData;
+
+  return new Promise(async function(resolve, reject) {
+    try {
+      dateFrom = currentDate.format("YYYY-MM-DD");
+      dateTo = currentDate
+        .clone()
+        .add(90, "days")
+        // .add(config.sync.lookAheadDays, "days")
+        .format("YYYY-MM-DD"); // 2018-03-06 : on prend pour date de fin de requête la date du jour (+ lookAheadDays)
+
+      fetchedSeancesData = (await query(dateFrom, dateTo))[1]; // On ne garde que les séances futures (index: 1)
+
+      fetchedSeancesData = _(fetchedSeancesData)
+        .thru(d => _.fromPairs([[moment().format(), d]]))
+        .value();
+
+      dbFuture.setState(fetchedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
+      dbFuture.write();
+
+
+      // TODO: utiliser la méthode `write` de lowdb (elle devrait être est asynchrone) ?
+      // await writeJsonFile(
+      //   __dirname + "/../../data/future.json",
+      //   fetchedSeancesData
+      // );
+      // console.log(
+      //   `${moment().format()} : Séances futures : Synchronisation terminée, ${
+      //     fetchedSeancesData.length
+      //   } séances ajoutées ou réécrites.`
+      // );
+      resolve();
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+/**
+ * past
+ * Exécute une requête sur les séances passées (depuis la dernière synchro) et écrit le fichier seances.json
+ */
+async function past() {
+  var currentDate = moment().startOf("day"); // On capture la date courante
+  var dateFrom;
+  var dateTo;
+  var existingSeancesData;
+  var fetchedSeancesData;
+  var updatedSeancesData;
+
+  return new Promise(async function(resolve, reject) {
+    try {
+      existingSeancesData = await Promise.all([
+        readJsonFile(__dirname + "/../../data/seances.json"), // données passées
+        [] // TODO: données futures
+      ]);
+
+      dateFrom = calcDateFrom(existingSeancesData[0]).format("YYYY-MM-DD");
+      dateTo = currentDate.clone().format("YYYY-MM-DD");
+
+      fetchedSeancesData = await query(dateFrom, dateTo);
+      updatedSeancesData = mergeSeances(
+        existingSeancesData[0],
+        fetchedSeancesData[0]
+      );
+
+      dbSeances.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
+      dbSeances.write();
+      // TODO: utiliser la méthode `write` de lowdb (elle devrait être est asynchrone) ?
+      // await writeJsonFile(
+      //   __dirname + "/../../data/seances.json",
+      //   updatedSeancesData
+      // );
+
+      console.log(
+        `${moment().format()} : Séances passées : Synchronisation terminée, ${
+          fetchedSeancesData[0].length
+        } séances ajoutées ou réécrites.`
+      );
+      resolve();
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+/**
+ * query
+ * Effectue une synchronisation des données de séances entre deux dates
+ * @param dateFrom {string} Date de début de requête (YYYY-MM-DD)
+ * @param dateTo {string} Date de fin de requête (YYYY-MM-DD)
+ * @return {Promise}
+ */
+async function query(dateFrom, dateTo) {
+  var connectId;
+  var fetchedTicketsCsv;
+  var fetchedTicketsJson;
+  var fetchedSeancesData;
+  var fetchedSeancesDataSplit;
+
+  return new Promise(async function(resolve, reject) {
+    try {
+      connectId = await connect(
+        config.sync.connectUrl,
+        config.sync.login,
+        config.sync.password
+      );
+      fetchedTicketsCsv = await httpQuery(
+        connectId,
+        _.template(config.sync.requestTemplates.tickets)({
+          dateFrom: dateFrom,
+          dateTo: dateTo
+        })
+      );
+      fetchedTicketsJson = await _csvToJson(
+        fetchedTicketsCsv,
+        config.sync.jsonHeaders["tickets"]
+      );
+      fetchedSeancesData = aggregateTicketsToSeances(fetchedTicketsJson);
+      fetchedSeancesDataSplit = splitSeances(fetchedSeancesData); // => [[passées], [futures]]
+      resolve(fetchedSeancesDataSplit);
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
 
 /**
  * run
@@ -19,8 +158,10 @@ module.exports = {
  * - Sérialise la mise à jour (fichier JSON)
  * @return { Promise }
  * @TODO utiliser le fichier de config pour indiquer le chemin du fichier JSON de données.
+ * @IMPORTANT legacy code : désormais séparé entre query (requête serveur) et past/future (appellent la requête serveur et enregistrent les données)
+ * @IMPORTANT mais toujours utilisé en production par le scheduler.
  */
-async function run () {
+async function run() {
   var connectId;
   var fetchedTicketsCsv;
   var fetchedTicketsJson;
@@ -31,7 +172,7 @@ async function run () {
   var dateFrom, dateTo;
   var currentDate = moment().startOf("day"); // On capture la date courante
 
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async function(resolve, reject) {
     try {
       existingSeancesData = await Promise.all([
         readJsonFile(__dirname + "/../../data/seances.json"), // données passées
@@ -39,15 +180,34 @@ async function run () {
       ]);
 
       dateFrom = calcDateFrom(existingSeancesData[0]).format("YYYY-MM-DD");
-      dateTo = currentDate.clone().add(config.sync.lookAheadDays, "days").format("YYYY-MM-DD"); // 2018-03-06 : on prend pour date de fin de requête la date du jour (+ lookAheadDays)
-      connectId = await connect(config.sync.connectUrl, config.sync.login, config.sync.password);
-      fetchedTicketsCsv = await query(connectId, _.template(config.sync.requestTemplates.tickets)({ dateFrom: dateFrom, dateTo: dateTo }));
-      fetchedTicketsJson = await _csvToJson(fetchedTicketsCsv, config.sync.jsonHeaders["tickets"]);
+      dateTo = currentDate
+        .clone()
+        .add(config.sync.lookAheadDays, "days")
+        .format("YYYY-MM-DD"); // 2018-03-06 : on prend pour date de fin de requête la date du jour (+ lookAheadDays)
+      connectId = await connect(
+        config.sync.connectUrl,
+        config.sync.login,
+        config.sync.password
+      );
+      fetchedTicketsCsv = await query(
+        connectId,
+        _.template(config.sync.requestTemplates.tickets)({
+          dateFrom: dateFrom,
+          dateTo: dateTo
+        })
+      );
+      fetchedTicketsJson = await _csvToJson(
+        fetchedTicketsCsv,
+        config.sync.jsonHeaders["tickets"]
+      );
       fetchedSeancesData = aggregateTicketsToSeances(fetchedTicketsJson);
       fetchedSeancesDataSplit = splitSeances(fetchedSeancesData); // => [[passées], [futures]]
-      updatedSeancesData = mergeSeances(existingSeancesData[0], fetchedSeancesDataSplit[0]);
+      updatedSeancesData = mergeSeances(
+        existingSeancesData[0],
+        fetchedSeancesDataSplit[0]
+      );
 
-      db.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
+      dbSeances.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
 
       // TODO: utiliser la méthode `write` de lowdb (elle devrait être est asynchrone) ?
       await writeJsonFile(
@@ -55,15 +215,17 @@ async function run () {
         updatedSeancesData
       );
 
-      console.log(`${ moment().format() } : Synchronisation terminée, ${ fetchedSeancesDataSplit[0].length } séances ajoutées ou réécrites.`);
+      console.log(
+        `${moment().format()} : Synchronisation terminée, ${
+          fetchedSeancesDataSplit[0].length
+        } séances ajoutées ou réécrites.`
+      );
       resolve();
-
     } catch (e) {
       reject(e);
     }
   });
 }
-
 
 /**
  * connect
@@ -75,7 +237,7 @@ async function run () {
  * @date 2017-06-13
  * @date 2018-02-07 : utilise async/await
  */
-async function connect (url, login, password) {
+async function connect(url, login, password) {
   process.stdout.write("Connexion au serveur : ");
   try {
     var res = await request({
@@ -83,24 +245,23 @@ async function connect (url, login, password) {
       uri: url,
       followRedirect: true,
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/x-www-form-urlencoded"
       },
       body: "login=" + login + "&motPasse=" + password + "&Submit=Valider",
       simple: false,
       resolveWithFullResponse: true // https://github.com/request/request-promise#get-the-full-response-instead-of-just-the-body
     });
-    var connectId = res.headers.location.match(/sid=([a-z\d]+)$/)[1]; 
-    process.stdout.write(`OK\n${ connectId }\n`);
+    var connectId = res.headers.location.match(/sid=([a-z\d]+)$/)[1];
+    process.stdout.write(`OK\n${connectId}\n`);
     return connectId;
   } catch (e) {
     process.stdout.write("Echec\n");
-    throw("");
+    throw "";
   }
 }
 
-
 /**
- * query
+ * httpQuery
  * Fait une requête distante
  * @param queryUrl {String} URL de la requête
  * @param requestBody {String} Corps de la requête (à construite à partir de templates présents dans le fichier config)
@@ -109,7 +270,7 @@ async function connect (url, login, password) {
  * @date 2018-02-07 : utilise async/await
  * @todo Convertir la réponse en utf8
  */
-async function query (connectId, requestBody) {
+async function httpQuery(connectId, requestBody) {
   var sessionId;
   var res;
 
@@ -121,16 +282,15 @@ async function query (connectId, requestBody) {
       uri: config.sync.queryUrl,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": config.sync.cookieKey + "=" + connectId
+        Cookie: config.sync.cookieKey + "=" + connectId
       },
       json: true,
       body: requestBody
-    }))
-    .data.sessionId;
-    process.stdout.write(`OK\n${ sessionId }\n`);
+    })).data.sessionId;
+    process.stdout.write(`OK\n${sessionId}\n`);
   } catch (e) {
     process.stdout.write("Echec\n");
-    throw("");
+    throw "";
   }
 
   // Récupération des données
@@ -140,24 +300,24 @@ async function query (connectId, requestBody) {
       method: "GET",
       uri: config.sync.queryUrl + "&op=dl&format=csv&id=" + sessionId,
       headers: {
-        "Cookie": config.sync.cookieKey + "=" + connectId
+        Cookie: config.sync.cookieKey + "=" + connectId
       },
       json: false,
       resolveWithFullResponse: true // https://github.com/request/request-promise#get-the-full-response-instead-of-just-the-body
     });
 
-    if (res.headers["content-disposition"].substring(0, 10) === "attachment") { // Vérifie que la réponse est un attachement
-        process.stdout.write("OK\n");
-        return res.body; // TODO: convertir en utf8
+    if (res.headers["content-disposition"].substring(0, 10) === "attachment") {
+      // Vérifie que la réponse est un attachement
+      process.stdout.write("OK\n");
+      return res.body; // TODO: convertir en utf8
     } else {
-      throw("");
+      throw "";
     }
   } catch (e) {
     process.stdout.write("Echec\n");
-    throw("");
+    throw "";
   }
 }
-
 
 /* calcDateFrom
  * Actuellement, on considère que la date de début de requête doit être la date des dernières données disponibles.
@@ -165,10 +325,13 @@ async function query (connectId, requestBody) {
  * @param seancesData {Object}: données JSON de séances.
  * @return {Object moment} : date de la séance la plus récente.
  */
-function calcDateFrom (seancesData) {
-  return moment.max(_(seancesData).map(d => moment(d.date)).value());
+function calcDateFrom(seancesData) {
+  return moment.max(
+    _(seancesData)
+      .map(d => moment(d.date))
+      .value()
+  );
 }
-
 
 /**
  * _csvToJson
@@ -177,8 +340,8 @@ function calcDateFrom (seancesData) {
  * @param headers {Array: String} : tableau des noms d'en-têtes de colonnes.
  * @return {Object} : Données JSON.
  */
-function _csvToJson (csv, headers) {
- return new Promise((resolve, reject) => {
+function _csvToJson(csv, headers) {
+  return new Promise((resolve, reject) => {
     var o = [];
     csvtojson({
       delimiter: ";",
@@ -187,13 +350,12 @@ function _csvToJson (csv, headers) {
       checkType: true, // Type inference
       headers: headers
     })
-    .fromString(csv)
-    .on("json", row => o.push(row))
-    .on("error", err => reject(err))
-    .on("done", () => resolve(o));
+      .fromString(csv)
+      .on("json", row => o.push(row))
+      .on("error", err => reject(err))
+      .on("done", () => resolve(o));
   });
 }
-
 
 /**
  * aggregateTicketsToSeances
@@ -201,32 +363,42 @@ function _csvToJson (csv, headers) {
  * @return {Array: Object}: données JSON de séances.
  * @todo documentation
  */
-function aggregateTicketsToSeances (data) {
+function aggregateTicketsToSeances(data) {
   return _(data)
-  .map(function (item) {
-    return _.assign({}, item, { montant: parseFloat((item.montant || "0").replace(",", ".")) });
-  })
-  .groupBy("idSeance")
-  .map(function (items) {
-    return {
-      idSeance: items[0].idSeance,
-      idManif: items[0].idManif,
-      titre: items[0].titre,
-      date: items[0].date,
-      salle: config.salles[items[0].idSalle],
-      tickets: {
-        compte: items.length,
-        recette: _.sumBy(items, item => item.montant),
-        tarif: _(items).groupBy("tarif").mapValues(item => item.length).value(),
-        web: _(items).filter(function (item) { return _.indexOf(config.codesCanalWeb, item.idCanal) > -1; }).value().length // Codes canal de vente web
-      }
-    };
-  })
-  .filter(function (d) { return !_.isUndefined(d.salle); }) // Retire les items hors salle de cinéma
-  .sortBy("date")
-  .value();
+    .map(function(item) {
+      return _.assign({}, item, {
+        montant: parseFloat((item.montant || "0").replace(",", "."))
+      });
+    })
+    .groupBy("idSeance")
+    .map(function(items) {
+      return {
+        idSeance: items[0].idSeance,
+        idManif: items[0].idManif,
+        titre: items[0].titre,
+        date: items[0].date,
+        salle: config.salles[items[0].idSalle],
+        tickets: {
+          compte: items.length,
+          recette: _.sumBy(items, item => item.montant),
+          tarif: _(items)
+            .groupBy("tarif")
+            .mapValues(item => item.length)
+            .value(),
+          web: _(items)
+            .filter(function(item) {
+              return _.indexOf(config.codesCanalWeb, item.idCanal) > -1;
+            })
+            .value().length // Codes canal de vente web
+        }
+      };
+    })
+    .filter(function(d) {
+      return !_.isUndefined(d.salle);
+    }) // Retire les items hors salle de cinéma
+    .sortBy("date")
+    .value();
 }
-
 
 /**
  * splitSeances
@@ -235,18 +407,14 @@ function aggregateTicketsToSeances (data) {
  * @param offset { Number } : durée (en minute) à attendre après l'heure de la séance pour la considérer comme passée
  * @return { Array } : [séances passées, séances futures]
  */
-function splitSeances (seances, offset) {
+function splitSeances(seances, offset) {
   offset = offset || 10;
-  return _(seances).partition(d =>
-    moment(d.date)
-    .isBefore(
-      moment().subtract(offset, "minutes"),
-      "minutes"
+  return _(seances)
+    .partition(d =>
+      moment(d.date).isBefore(moment().subtract(offset, "minutes"), "minutes")
     )
-  )
-  .value();
+    .value();
 }
-
 
 /**
  * mergeSeances
@@ -256,10 +424,14 @@ function splitSeances (seances, offset) {
  * @param {Object} seances : collection de séances.
  * @param {Object} added : collection de séances.
  */
-function mergeSeances (seances, added) {
-  return _(seances).concat(added).groupBy("idSeance").map(_.last).sortBy("date").value();
+function mergeSeances(seances, added) {
+  return _(seances)
+    .concat(added)
+    .groupBy("idSeance")
+    .map(_.last)
+    .sortBy("date")
+    .value();
 }
-
 
 /**
  * readJsonFile
@@ -267,7 +439,7 @@ function mergeSeances (seances, added) {
  * @param path {String}: chemin d'accès.
  * @return {Promise: Object}: données JSON parsées.
  */
-function readJsonFile (path) {
+function readJsonFile(path) {
   return new Promise((resolve, reject) => {
     return fs.readFile(path, "utf8", (err, data) => {
       if (err) {
@@ -280,26 +452,20 @@ function readJsonFile (path) {
   });
 }
 
-
 /**
  * writeJsonFile
  * Fonction générique d'écriture de fichier JSON encodé en utf-8.
  * @param path {String}: chemin d'accès.
  * @return {Promise: Object}: données JSON parsées.
  */
-function writeJsonFile (path, data) {
+function writeJsonFile(path, data) {
   return new Promise((resolve, reject) => {
-    return fs.writeFile(
-      path,
-      JSON.stringify(data, null, 2),
-      "utf8",
-      (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
+    return fs.writeFile(path, JSON.stringify(data, null, 2), "utf8", err => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
       }
-    );
+    });
   });
 }

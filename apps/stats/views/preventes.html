@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="../css/main.css">
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/jquery.eager-navbar.min.js"></script>
+    <script src="../js/main.js"></script>
+    <title>Préventes - StatsCF</title>
+  </head>
+  <body>
+    <%= partials.header %>
+    <div class="main">
+      <h1>Préventes</h1>
+      <h2>Situation au <%= _.lowerFirst(moment(_(data).keys().value()[0]).format("dddd DD MMM YYYY, HH[h]mm")) %></h2>
+      <table>
+        <tr>
+          <th style="width: 30%;">Date / heure / salle</th>
+          <th style="width: 60%;">Titre</th>
+          <th style="width: 10%;">Tickets</th>
+          
+        </tr>
+        <% _.values(data)[0].forEach(d => { %>
+          <% var m = moment(d.date); %>
+          <tr>
+            <td class="center" data-value="<%= m %>"><%= m.format("ddd D MMM HH[h]mm") %> / <%= d.salle.code %></td>
+            <td><%= d.titre %></td>
+            <td class="right"><%= d.tickets.compte %></td>
+          </tr>
+        <%}); %>
+      </table>
+
+
+
+
+
+
+    </div>
+  </body>
+</html>
