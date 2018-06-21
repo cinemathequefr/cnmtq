@@ -5,6 +5,7 @@ const config = require("../config");
 /**
  *
  * seances
+ * Transformation de données de séances : délimitation temporelle et agrégation
  * @param inData {Array:Object} Données de séances
  * @param dateFrom {string} Date "YYY-MM-DD" de début de la requête. Obligatoire
  * @param dateTo {string} Date "YYY-MM-DD" de fin de la requête. Obligatoire
