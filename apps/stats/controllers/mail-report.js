@@ -59,7 +59,8 @@ async function daily(queryDate, recipients) {
         )} : ${_(data.data).sumBy(d => d.tickets.compte)} spectateurs`,
         "", // TODO: Version texte
         html,
-        config.mail.recipients // TODO: passer en paramètre de la fonction
+        recipients
+        // config.mail.recipients // TODO: passer en paramètre de la fonction
       );
 
       console.log(`${moment().format()} : Mail envoyé.`);
