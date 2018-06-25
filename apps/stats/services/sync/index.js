@@ -365,6 +365,8 @@ function _csvToJson(csv, headers) {
  */
 function aggregateTicketsToSeances(data) {
   return _(data)
+    .groupBy(d => d.idTicket) // Dédoublonnage des séances sur idTicket
+    .mapValues(d => d[0])
     .map(function(item) {
       return _.assign({}, item, {
         montant: parseFloat((item.montant || "0").replace(",", "."))
