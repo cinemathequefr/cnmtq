@@ -11,24 +11,13 @@ const extendDataForViews = require("../lib/extendDataForViews");
 /**
  * daily
  * Composition et envoi par mail du rapport quotidien de fréquentation
- * @param queryDate { String } YYYY-MM-DD. Par défaut, date courante.
- * @return { Promise }
+ * @param queryDate {string} Date du rapport à envoyer (YYYY-MM-DD)
+ * @param recipients {Object:Array:string} Liste des adresses e-mail des destinataires, en valeur des clés `to` et `bcc`.
+ * @return {Promise}
  */
-async function daily(queryDate) {
+async function daily(queryDate, recipients) {
   var data;
   var html;
-
-  /*
-  queryDate =
-    queryDate ||
-    db
-      .map(d => d.date)
-      .max()
-      .value()
-      .substring(0, 10);
-  */
-
-  queryDate = moment().format("YYYY-MM-DD");
 
   data = db
     .filter(d => {

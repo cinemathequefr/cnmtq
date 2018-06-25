@@ -17,7 +17,10 @@ const syncJob = schedule.scheduleJob(
   { hour: 22, minute: 15 },
   async function() {
     await sync.past();
-    await controllers.mailReport.daily();
+    await controllers.mailReport.daily(
+      moment().format("YYYY-MM-DD"),
+      config.mail.recipients
+    );
   }
 );
 
