@@ -15,6 +15,14 @@
     <div class="main">
       <h1>Préventes</h1>
       <h2>Situation au <%= _.lowerFirst(moment(_(data).keys().value()[0]).format("dddd DD MMM YYYY, HH[h]mm")) %></h2>
+
+      <% if (nextSync.status === true) { %>
+        <p>Les données sont à jour.</p>
+      <% } else { %>
+        <p>Prochaine synchronisation à <%= moment(nextSync.dateTime).format("HH[h]mm") %></p>
+      <% } %>
+
+      <pre><code><%= JSON.stringify(data) %></code></pre>
       <table>
         <tr>
           <th style="width: 30%;">Date / heure / salle</th>
