@@ -41,18 +41,6 @@ async function future() {
 
       dbFuture.setState(fetchedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
       dbFuture.write();
-
-
-      // TODO: utiliser la méthode `write` de lowdb (elle devrait être est asynchrone) ?
-      // await writeJsonFile(
-      //   __dirname + "/../../data/future.json",
-      //   fetchedSeancesData
-      // );
-      // console.log(
-      //   `${moment().format()} : Séances futures : Synchronisation terminée, ${
-      //     fetchedSeancesData.length
-      //   } séances ajoutées ou réécrites.`
-      // );
       resolve();
     } catch (e) {
       reject(e);

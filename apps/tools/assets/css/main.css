@@ -1,0 +1,283 @@
+@import url('https://fonts.googleapis.com/css?family=Quicksand:400,700|Source+Sans+Pro:400,600,700');
+
+
+@page {
+ size: 210mm 297mm;
+ margin: 10mm 25mm;
+}
+
+
+body {
+  font-size: 12pt;
+  font-family: Source Sans Pro, sans-serif;
+  margin: 0;
+}
+
+
+img {
+  display: none;
+}
+
+ul {
+  list-style-type: none; padding: 0;
+}
+
+
+a:link, a:hover, a:active, a:visited {
+  display: block; color: inherit; text-decoration: none;
+  outline: none; cursor: default;
+}
+
+.container {
+  width: 90%; margin: 0 auto;
+}
+
+.date {
+  display: block;
+  font-family: Quicksand;
+  font-size: 16pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+
+/* Exposition, musée, bibliothèque */
+.visits {
+  border-top: solid 0.5mm black;
+  margin: 5mm 0 0 0;
+}
+
+.visit {
+  display: block;
+  font-family: Quicksand;
+  font-weight: 700;
+  font-size: 12pt;
+  padding: 1mm 0;
+  border-bottom: solid 0.5mm black;
+}
+
+.visit > .time {
+  display: inline-block; width: 3cm;
+  text-align: left;
+}
+
+.visit > .time + span {
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.show {
+  display: block;
+}
+
+.show-content > div:first-of-type {
+  display: inline-block;
+  font-family: Quicksand; font-weight: 700; font-size: 11pt;
+  border-top: solid 0.25mm black;
+  padding: 2.5mm 0 0 0;
+  margin: 2.5mm 0 0 0;
+  /*background-color: #69f;*/
+}
+
+.container > .show:nth-child(4) > .show-content > div:first-of-type {
+  border-top: none;
+}
+
+.show-content .salle:before {
+  content: " · Salle ";
+}
+
+.show .cycle {
+  display: inline-block;
+  font-family: Quicksand; font-weight: 700; font-size: 11pt;
+}
+
+.show .cycle:before {
+  content: " · ";
+}
+
+.group {
+  margin: 0mm 0 0 0mm;
+}
+
+.title-manif {
+  color: dodgerblue;
+  /*font-family: Quicksand; font-weight: 700;*/
+  font-family: Source Sans Pro; font-weight: 700;
+}
+
+.rem {
+  color: darkslateblue;
+  font-size: 11pt; font-weight: 400;
+}
+
+.rem.alert {
+  color: crimson;
+}
+
+.film .title {
+  font-weight: 600;
+  color: dodgerblue;
+}
+
+/*
+.film .title:before {
+  content: "· ";
+}
+*/
+
+.film-cm {
+  display: inline-block;
+  border: solid 0.25mm black; margin: 0 0 0 0; padding: 0 0.5mm;
+  font-size: 9pt; font-weight: 600;
+}
+
+
+
+
+@media screen {
+  .container {
+    width: 900px;
+  }
+}
+
+
+
+
+
+/*
+body {
+  position: relative;
+  font-family: Source Sans Pro, sans-serif;
+  color: #000;
+  font-size: 16px;
+
+}
+
+img {
+  display: none;
+}
+
+ul {
+  list-style-type: none; padding: 0;
+}
+
+
+a:link, a:hover, a:active, a:visited {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  cursor: default;
+  outline: none;
+}
+
+.date {
+  display: block;
+  font-family: Quicksand;
+  font-size: 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.visits {
+  border-top: solid 0.5mm black;
+  margin: 0.75cm 0;
+}
+
+.visit {
+  display: block;
+  font-family: Quicksand;
+  font-weight: 700;
+  padding: 1mm 0;
+  border-bottom: solid 0.5mm black;
+}
+
+.visit > .time {
+  display: inline-block; width: 3cm;
+  text-align: left;
+}
+
+.visit > .time + span {
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.show:not(:last-child) {
+  padding: 1mm 0;
+  border-bottom: solid 0.5mm black;
+}
+
+
+.show-content > div:first-of-type {
+  display: inline-block;
+  text-align: left;
+  font-family: Quicksand;
+  font-weight: 700;
+}
+
+.show-content .salle:before {
+  content: " · Salle ";
+}
+
+
+.show .cycle {
+  display: inline-block;
+  font-family: Quicksand;
+  font-weight: 700;
+}
+
+.show .cycle:before {
+  content: " · Cycle ";
+}
+
+
+
+.rem {
+  color: darkslateblue;
+  font-weight: 600;
+}
+
+.rem.alert {
+  color: crimson;
+}
+
+.film .title {
+  font-weight: 600;
+}
+
+.film-cm {
+  display: inline-block;
+  border: solid 0.25mm black; margin-left: 1mm; font-size: 9pt;
+  font-weight: 700;
+}
+
+
+@page {
+   size: 7in 9.25in;
+   margin: 5mm 16mm;
+}
+
+
+@media screen {
+  .container {
+    width: 900px;
+    margin: 48px auto;
+  }
+}
+
+@media print {
+  body {
+    font-size: 11pt;
+    margin: ;
+  }
+
+  .container {
+    width: 100%;
+    margin: 0 auto;
+  }
+
+
+}
+*/

@@ -19,16 +19,15 @@
       <% if (nextSync.status === true) { %>
         <p>Les données sont à jour.</p>
       <% } else { %>
-        <p>Prochaine synchronisation à <%= moment(nextSync.dateTime).format("HH[h]mm") %></p>
+        <p>Prochaine synchronisation possible à partir de <%= moment(nextSync.dateTime).format("HH[h]mm") %>.</p>
       <% } %>
+      <p>Important : les séances n'ayant pas encore de ventes ne figurent pas dans le tableau.</p>
 
-      <pre><code><%= JSON.stringify(data) %></code></pre>
-      <table>
+      <table data-data='<%- JSON.stringify(_(data).map(d => _(d).map(f => _(f).pick(["date", "salle.id", "salle.code", "titre", "tickets.compte"]))).value()[0]) %>'>
         <tr>
           <th style="width: 30%;">Date / heure / salle</th>
           <th style="width: 60%;">Titre</th>
           <th style="width: 10%;">Tickets</th>
-          
         </tr>
         <% _.values(data)[0].forEach(d => { %>
           <% var m = moment(d.date); %>
@@ -39,12 +38,6 @@
           </tr>
         <%}); %>
       </table>
-
-
-
-
-
-
     </div>
   </body>
 </html>

@@ -16,9 +16,7 @@ module.exports = async function(ctx, next) {
   ctx.type = "text/html; charset=utf-8";
 
   try {
-
     var nxt = nextSyncAllowed();
-
     if (nxt.status === true) {
       try {
         await sync.future();
@@ -26,38 +24,18 @@ module.exports = async function(ctx, next) {
         console.log("La synchronisation a échoué.");
       }
     }
-
     data = dbFuture.getState();
-
     return ctx.render("preventes", extendDataForViews(data, { nextSync: nxt }));
   } catch (e) {
     console.log(e);
   }
 };
 
-/**
- * isValidFutureSyncRequest
- * @return {boolean} La requête de synchro est valide (le délai minimum depuis la synchro précédente est passé)
- */
-/*
-function isValidFutureSyncRequest() {
-  var 
-  return moment(
-    _(dbFuture.getState())
-      .keys()
-      .value()[0]
-  )
-    .add(config.syncThrottleMinutes, "minutes")
-    .isAfter(moment(), "second");
-}
-*/
-
-
 /*
  * nextSyncAllowed
  * A partir la date/heure de la dernière synchro (inscrite en clé de l'objet dbFuture) et du délai de throttling
  * renvoie la date/heure de la prochaine synchro possible et indique si elle est déjà passée.
- * @return {object}.status {boolean} : la synchro est possible
+ * @return {object}.status {boolean} : true: la synchro est possible
  * @return {object}.dateTime {string|null} : si status:false, date/heure de la prochaine synchro
  */
 function nextSyncAllowed() {
@@ -68,10 +46,10 @@ function nextSyncAllowed() {
   ).add(config.sync.syncThrottleMinutes, "minutes");
 
   var status = moment().isAfter(nextSyncDateTime, "second");
-  var dateTime = (status === false ? nextSyncDateTime.format() : null);
+  var dateTime = status === false ? nextSyncDateTime.format() : null;
 
   return {
     status: status,
     dateTime: dateTime
-  }
+  };
 }
