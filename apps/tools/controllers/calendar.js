@@ -12,7 +12,7 @@ module.exports = async function(ctx, next) {
   })
     .then($ => {
       var data = $("div.day.today").html();
-      data = data.replace(/(href=")([^"]+)(")/gi, "$1javascript: void 0;$3");
+      // data = data.replace(/(href=")([^"]+)(")/gi, "$1javascript: void 0;$3");
       return ctx.render("calendar", { data: data });
     })
     .catch(err => {
