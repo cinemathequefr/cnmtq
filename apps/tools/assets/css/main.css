@@ -52,7 +52,7 @@ a:link, a:hover, a:active, a:visited {
   display: block;
   font-family: Quicksand;
   font-weight: 700;
-  font-size: 12pt;
+  font-size: 11pt;
   padding: 1mm 0;
   border-bottom: solid 0.5mm black;
 }
@@ -77,10 +77,9 @@ a:link, a:hover, a:active, a:visited {
   border-top: solid 0.25mm black;
   padding: 2.5mm 0 0 0;
   margin: 2.5mm 0 0 0;
-  /*background-color: #69f;*/
 }
 
-.container > .show:nth-child(4) > .show-content > div:first-of-type {
+.container > .show:nth-child(3) > .show-content > div:first-of-type {
   border-top: none;
 }
 
@@ -99,6 +98,18 @@ a:link, a:hover, a:active, a:visited {
 
 .group {
   margin: 0mm 0 0 0mm;
+}
+
+.infos {
+  display: block;
+  font-size: 10pt;
+}
+
+
+.film-age.bubble {
+  display: inline-block; line-height: 11pt; height: 12pt; width: 12pt; font-size: 10pt;
+  border-radius: 100px; background-color: #aaa;
+  text-align: center; vertical-align: middle;
 }
 
 .title-manif {
@@ -121,11 +132,6 @@ a:link, a:hover, a:active, a:visited {
   color: dodgerblue;
 }
 
-/*
-.film .title:before {
-  content: "· ";
-}
-*/
 
 .film-cm {
   display: inline-block;
