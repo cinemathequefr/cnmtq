@@ -5,8 +5,11 @@ var _ = require("lodash");
 module.exports = async function(ctx, next) {
   ctx.type = "text/html; charset=utf-8";
 
+  // Si un paramètre quelconque est passé dans la chaîne de requête, on obtient les données du lendemain (ne marchera pas le dernier jour du mois)
+  const isTomorrow = _.keys(objectToLowerCase(ctx.request.query)).length > 0;
+
   // On récupère le calendrier (object sélection cheerio)
-  var $calendar = await getCalendar();
+  var $calendar = await getCalendar(isTomorrow);
 
   // Tableau des URLs de séances
   var urls = $calendar
@@ -46,20 +49,22 @@ module.exports = async function(ctx, next) {
 
 /**
  * getCalendar
- * Fait une requête http sur le calendrier général et extrait le bloc de la date du jour
+ * Fait une requête http sur le calendrier général et extrait le bloc de la date du jour ou du lendemain.
+ * @param {boolean} isTomorrow : obtenir les données du jour courant (false), du lendemain (true).
  * @return {object} sélection cheerio
  */
-async function getCalendar() {
+async function getCalendar(isTomorrow) {
   return request({
     method: "GET",
     uri: "http://www.cinematheque.fr/calendrier.html",
     resolveWithFullResponse: false
   })
     .then(html => {
-      return cheerio
+      var o = cheerio
         .load(html)
         .root()
         .find("div.day.today"); // Si on veut le bloc du lendemain (noeud frère suivant), ajouter `.next()`
+      return isTomorrow ? o.next() : o;
     })
     .catch(err => err);
 }
@@ -93,4 +98,18 @@ function getShowInfo(url) {
         .get();
     })
     .catch(err => err);
+}
+
+/**
+ * objectToLowerCase
+ * Shallow conversion of the keys/string values of an object to lowercase.
+ * Used to format query parameters (given as an object).
+ * @param o {object}
+ * @return o {object}
+ */
+function objectToLowerCase(o) {
+  return _(o)
+    .mapKeys((v, k) => k.toLowerCase())
+    .mapValues((v, k) => (typeof v === "string" ? v.toLowerCase() : v))
+    .value();
 }
