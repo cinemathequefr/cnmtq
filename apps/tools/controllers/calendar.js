@@ -63,7 +63,7 @@ async function getCalendar(isTomorrow) {
       var o = cheerio
         .load(html)
         .root()
-        .find("div.day.today"); // Si on veut le bloc du lendemain (noeud frère suivant), ajouter `.next()`
+        .find("div.day.today");
       return isTomorrow ? o.next() : o;
     })
     .catch(err => err);

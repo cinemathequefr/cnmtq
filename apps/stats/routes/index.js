@@ -31,21 +31,17 @@ privateRouter.get("/day/:date?", controllers.day);
 privateRouter.get("/progression", controllers.progression);
 privateRouter.get("/preventes", controllers.preventes);
 
-
-
-
-privateRouter.get("/info", async function (ctx, next) {
+privateRouter.get("/info", async function(ctx, next) {
   if (ctx.isAuthenticated() === false) {
     ctx.status = 401;
     return;
-  }  
-  ctx.body = `${ moment().format() }\n${ JSON.stringify(config.mail.recipients) }`;
+  }
+  ctx.body = `${moment().format()}\n${JSON.stringify(config.mail.recipients)}`;
 });
 
 privateRouter.get("/api/seances", controllers.api.seances);
 
-
 module.exports = {
   public: publicRouter,
   private: privateRouter
-}
+};

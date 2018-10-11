@@ -14,7 +14,7 @@ const controllers = require("./controllers");
 moment.tz.setDefault("Europe/Paris");
 moment.updateLocale("fr", config.momentLocaleFr);
 const syncJob = schedule.scheduleJob(
-  { hour: 22, minute: 15 },
+  { hour: 22, minute: 30 },
   async function() {
     await sync.past();
     await controllers.mailReport.daily(
