@@ -10,6 +10,7 @@ const timezone = require("moment-timezone");
 const config = require("./config");
 const router = require("./routes");
 const controllers = require("./controllers");
+const forceSSL = require("koa-force-ssl");
 
 moment.tz.setDefault("Europe/Paris");
 moment.updateLocale("fr", config.momentLocaleFr);
@@ -25,6 +26,9 @@ const syncJob = schedule.scheduleJob(
 );
 
 const app = (module.exports = new Koa());
+
+// Force SSL (https://github.com/dotcypress/koa-force-ssl)
+app.use(forceSSL());
 
 // Body parser + Passport
 app.use(bodyParser());
