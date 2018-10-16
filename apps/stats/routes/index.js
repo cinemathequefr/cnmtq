@@ -7,19 +7,8 @@ const controllers = require("../controllers");
 const publicRouter = new Router();
 const privateRouter = new Router();
 
-// privateRouter.use((ctx, next) => {
-//   if (ctx.isAuthenticated() === false) {
-//     ctx.status === 401;
-//     return;
-//   }
-//   next();
-// });
-
 publicRouter.redirect("/", "/day");
-// publicRouter.redirect("/day", "/day?date=2018-10-15", 301);
-
 publicRouter.get("/login", controllers.login);
-
 publicRouter.post(
   "/login",
   passport.authenticate("local", {

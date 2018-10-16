@@ -17,7 +17,7 @@ module.exports = async function(ctx, next) {
 
   // Sans paramètre de date, on redirige vers la dernière date disponible (TODO: prendre en compte le cas où `ctx.query.date` est invalide)
   if (!ctx.query.date) {
-    ctx.status = 301;
+    ctx.status = 307;
     return ctx.redirect(`day?date=${lastAvailableDate()}`);
   }
 
