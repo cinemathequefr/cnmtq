@@ -16,6 +16,8 @@ const privateRouter = new Router();
 // });
 
 publicRouter.redirect("/", "/day");
+// publicRouter.redirect("/day", "/day?date=2018-10-15", 301);
+
 publicRouter.get("/login", controllers.login);
 
 publicRouter.post(
@@ -27,7 +29,8 @@ publicRouter.post(
 );
 
 publicRouter.get("/logout", controllers.logout);
-privateRouter.get("/day/:date?", controllers.day);
+privateRouter.get("/day", controllers.day);
+// privateRouter.get("/day/:date?", controllers.day);
 privateRouter.get("/progression", controllers.progression);
 privateRouter.get("/preventes", controllers.preventes);
 

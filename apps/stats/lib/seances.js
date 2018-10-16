@@ -9,8 +9,9 @@ const config = require("../config");
  * @param inData {Array:Object} Données de séances
  * @param dateFrom {string} Date "YYY-MM-DD" de début de la requête. Obligatoire
  * @param dateTo {string} Date "YYY-MM-DD" de fin de la requête. Obligatoire
- * @param _aggregateKey {string} Nom d'une fonction d'agrégation préexistante ou fonction d'agrégation. Facultatif (TODO: possibilité de passer une fonction d'agrégation)
- * @return {Array:Object} Données de séances après délimitation temporelle et éventuelle agrégation
+ * @param _aggregateKey {string} Nom d'une fonction d'agrégation préexistante ou fonction d'agrégation. Facultatif
+ * @return {Array:Object} Données de séances après délimitation temporelle et éventuelle agrégation.
+ * @todo Renommer la fonction (et le module), qui a un nom trop vague.
  */
 function seances(inData, dateFrom, dateTo, _aggregateKey) {
   const aggregateFn = {
@@ -176,7 +177,7 @@ function round(value, decimals) {
  * NON UTILISE POUR LE MOMENT
  * @param _dateFrom {string|Moment} Date de début. Objet moment ou chaîne représentant une date.
  * @param _dateTo {string|Moment} Date de fin. Objet moment ou chaîne représentant une date.
- * @return {boolean} 
+ * @return {boolean}
  */
 /*
 function isValidDateFromDateTo(_dateFrom, _dateTo) {

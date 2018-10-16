@@ -4,6 +4,7 @@ const dbSeances = require("../services/db")("seances");
 const config = require("../config");
 const tarifCat = require("../lib/tarifCat");
 const extendDataForViews = require("../lib/extendDataForViews");
+const seances = require("../lib/seances");
 
 module.exports = async function(ctx, next) {
   var queryDate;
@@ -14,23 +15,16 @@ module.exports = async function(ctx, next) {
     return;
   }
 
-  ctx.type = "text/html; charset=utf-8";
+  // Sans paramètre de date, on redirige vers la dernière date disponible (TODO: prendre en compte le cas où `ctx.query.date` est invalide)
+  if (!ctx.query.date) {
+    ctx.status = 301;
+    return ctx.redirect(`day?date=${lastAvailableDate()}`);
+  }
 
   try {
-    queryDate =
-      ctx.params.date ||
-      dbSeances
-        .map(d => d.date)
-        .max()
-        .value()
-        .substring(0, 10); // TODO: validation du paramètre
-
-
-    // TODO: obtenir les données par lib\seances.js (comme le fait controller\progression.js)
-    data = dbSeances
-      .filter(d => {
-        return d.date.substring(0, 10) === queryDate;
-      })
+    queryDate = ctx.query.date;
+    data = seances(dbSeances, queryDate, queryDate); // Obtient les données pour la date queryDate
+    data = _(data)
       .map(d =>
         _({})
           .assign(d, {
@@ -49,8 +43,17 @@ module.exports = async function(ctx, next) {
       .assign(extendDataForViews(data), { date: queryDate })
       .value();
 
+    ctx.type = "text/html; charset=utf-8";
     return ctx.render("day", data);
   } catch (e) {
     console.log(e);
   }
 };
+
+function lastAvailableDate() {
+  return dbSeances
+    .map(d => d.date)
+    .max()
+    .value()
+    .substring(0, 10); // TODO: validation du paramètre
+}
