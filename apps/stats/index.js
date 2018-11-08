@@ -15,8 +15,8 @@ var enforceHttps = require("koa-sslify");
 moment.tz.setDefault("Europe/Paris");
 moment.updateLocale("fr", config.momentLocaleFr);
 const syncJob = schedule.scheduleJob(
-  { hour: 22, minute: 30 },
-  async function() {
+  { hour: 22, minute: 45 },
+  async function () {
     await sync.past();
     await controllers.mailReport.daily(
       moment().format("YYYY-MM-DD"),

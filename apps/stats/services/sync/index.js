@@ -24,7 +24,7 @@ async function future() {
   var dateTo;
   var fetchedSeancesData;
 
-  return new Promise(async function(resolve, reject) {
+  return new Promise(async function (resolve, reject) {
     try {
       dateFrom = currentDate.format("YYYY-MM-DD");
       dateTo = currentDate
@@ -51,6 +51,7 @@ async function future() {
 /**
  * past
  * Exécute une requête sur les séances passées (depuis la dernière synchro) et écrit le fichier seances.json
+ * 
  */
 async function past() {
   var currentDate = moment().startOf("day"); // On capture la date courante
@@ -60,7 +61,7 @@ async function past() {
   var fetchedSeancesData;
   var updatedSeancesData;
 
-  return new Promise(async function(resolve, reject) {
+  return new Promise(async function (resolve, reject) {
     try {
       existingSeancesData = await Promise.all([
         readJsonFile(__dirname + "/../../data/seances.json"), // données passées
@@ -78,7 +79,7 @@ async function past() {
 
       dbSeances.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
       dbSeances.write();
-      // TODO: utiliser la méthode `write` de lowdb (elle devrait être est asynchrone) ?
+      // DONE: utiliser la méthode `write` de lowdb (elle devrait être est asynchrone)
       // await writeJsonFile(
       //   __dirname + "/../../data/seances.json",
       //   updatedSeancesData
@@ -86,7 +87,7 @@ async function past() {
 
       console.log(
         `${moment().format()} : Séances passées : Synchronisation terminée, ${
-          fetchedSeancesData[0].length
+        fetchedSeancesData[0].length
         } séances ajoutées ou réécrites.`
       );
       resolve();
@@ -110,7 +111,7 @@ async function query(dateFrom, dateTo) {
   var fetchedSeancesData;
   var fetchedSeancesDataSplit;
 
-  return new Promise(async function(resolve, reject) {
+  return new Promise(async function (resolve, reject) {
     try {
       connectId = await connect(
         config.sync.connectUrl,
@@ -160,7 +161,7 @@ async function run() {
   var dateFrom, dateTo;
   var currentDate = moment().startOf("day"); // On capture la date courante
 
-  return new Promise(async function(resolve, reject) {
+  return new Promise(async function (resolve, reject) {
     try {
       existingSeancesData = await Promise.all([
         readJsonFile(__dirname + "/../../data/seances.json"), // données passées
@@ -205,7 +206,7 @@ async function run() {
 
       console.log(
         `${moment().format()} : Synchronisation terminée, ${
-          fetchedSeancesDataSplit[0].length
+        fetchedSeancesDataSplit[0].length
         } séances ajoutées ou réécrites.`
       );
       resolve();
@@ -309,7 +310,7 @@ async function httpQuery(connectId, requestBody) {
 
 /* calcDateFrom
  * Actuellement, on considère que la date de début de requête doit être la date des dernières données disponibles.
- * (Cela implique que les données de la date en question seront à nouveau requêtées et potentiellement intégrées à la mise à jour.
+ * (Cela implique que les données de la date en question seront à nouveau requêtées et potentiellement intégrées à la mise à jour.)
  * @param seancesData {Object}: données JSON de séances.
  * @return {Object moment} : date de la séance la plus récente.
  */
@@ -355,13 +356,13 @@ function aggregateTicketsToSeances(data) {
   return _(data)
     .groupBy(d => d.idTicket) // Dédoublonnage des séances sur idTicket
     .mapValues(d => d[0])
-    .map(function(item) {
+    .map(function (item) {
       return _.assign({}, item, {
         montant: parseFloat((item.montant || "0").replace(",", "."))
       });
     })
     .groupBy("idSeance")
-    .map(function(items) {
+    .map(function (items) {
       return {
         idSeance: items[0].idSeance,
         idManif: items[0].idManif,
@@ -376,14 +377,14 @@ function aggregateTicketsToSeances(data) {
             .mapValues(item => item.length)
             .value(),
           web: _(items)
-            .filter(function(item) {
+            .filter(function (item) {
               return _.indexOf(config.codesCanalWeb, item.idCanal) > -1;
             })
             .value().length // Codes canal de vente web
         }
       };
     })
-    .filter(function(d) {
+    .filter(function (d) {
       return !_.isUndefined(d.salle);
     }) // Retire les items hors salle de cinéma
     .sortBy("date")
