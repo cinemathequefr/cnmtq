@@ -1,8 +1,9 @@
 var request = require("request-promise");
 var cheerio = require("cheerio");
 var _ = require("lodash");
+var pAll = require("p-all");
 
-module.exports = async function(ctx, next) {
+module.exports = async function (ctx, next) {
   ctx.type = "text/html; charset=utf-8";
 
   // Si un paramètre quelconque est passé dans la chaîne de requête, on obtient les données du lendemain (ne marchera pas le dernier jour du mois)
@@ -22,10 +23,13 @@ module.exports = async function(ctx, next) {
     .get();
 
   // Quand toutes les lignes d'infos ont été obtenues, on les intègre (un par film, dans l'ordre d'apparition) au DOM calendar
-  return Promise.all(
+
+  return pAll(
     _(urls)
-      .map(url => getShowInfo(url))
-      .value()
+    .map(url => (() => getShowInfo(url)))
+    .value(), {
+      concurrency: 1
+    }
   ).then(infos => {
     infos = _.flatten(infos);
     $calendar.find(".film").each((i, elem) => {
@@ -45,6 +49,33 @@ module.exports = async function(ctx, next) {
       data: html
     });
   });
+
+
+  // return Promise.all(
+  //   _(urls)
+  //   .map(url => getShowInfo(url))
+  //   .value()
+  // ).then(infos => {
+  //   infos = _.flatten(infos);
+  //   $calendar.find(".film").each((i, elem) => {
+  //     $calendar
+  //       .find(elem)
+  //       .append(
+  //         infos[i] === "" ? null : "<span class='infos'>" + infos[i] + "</span>"
+  //       );
+  //   });
+
+  //   var html = $calendar
+  //     .html()
+  //     .replace(/(href=")([^"]+)(")/gi, "$1javascript: void 0;$3") // Remplace les liens
+  //     .replace(/(16|35|70)mm/gi, "$1 mm"); // Corrige erreur typographique
+
+  //   return ctx.render("calendar", {
+  //     data: html
+  //   });
+  // });
+
+
 };
 
 /**
@@ -55,10 +86,10 @@ module.exports = async function(ctx, next) {
  */
 async function getCalendar(isTomorrow) {
   return request({
-    method: "GET",
-    uri: "http://www.cinematheque.fr/calendrier.html",
-    resolveWithFullResponse: false
-  })
+      method: "GET",
+      uri: "http://www.cinematheque.fr/calendrier.html",
+      resolveWithFullResponse: false
+    })
     .then(html => {
       var o = cheerio
         .load(html)
@@ -77,10 +108,10 @@ async function getCalendar(isTomorrow) {
  */
 function getShowInfo(url) {
   return request({
-    method: "GET",
-    uri: "http://www.cinematheque.fr/" + url,
-    resolveWithFullResponse: false
-  })
+      method: "GET",
+      uri: "http://www.cinematheque.fr/" + url,
+      resolveWithFullResponse: false
+    })
     .then(html => {
       return cheerio
         .load(html)
@@ -90,9 +121,9 @@ function getShowInfo(url) {
           var $el = cheerio.load(el);
           return _.trim(
             $el(".film")
-              .children(".realisateur")
-              .next() // Le noeud recherche est un noeud texte, voisin du noeud de classe `.realisateur`.
-              .text()
+            .children(".realisateur")
+            .next() // Le noeud recherche est un noeud texte, voisin du noeud de classe `.realisateur`.
+            .text()
           );
         })
         .get();

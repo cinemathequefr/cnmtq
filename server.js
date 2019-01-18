@@ -10,11 +10,23 @@ const server = (module.exports = new Koa());
 
 const vhostApps = [
   // Mapping vhosts/apps
-  // { vhost: "localhost", app: require("./apps/tools/index.js") },
-  { vhost: "localhost", app: require("./apps/stats/index.js") },
-  { vhost: "stats.cnmtq.fr", app: require("./apps/stats/index.js") },
-  { vhost: "www.cnmtq.fr", app: require("./apps/www/index.js") },
-  { vhost: "tools.cnmtq.fr", app: require("./apps/tools/index.js") }
+  {
+    vhost: "localhost",
+    app: require("./apps/tools/index.js")
+  },
+  // { vhost: "localhost", app: require("./apps/stats/index.js") },
+  {
+    vhost: "stats.cnmtq.fr",
+    app: require("./apps/stats/index.js")
+  },
+  {
+    vhost: "www.cnmtq.fr",
+    app: require("./apps/www/index.js")
+  },
+  {
+    vhost: "tools.cnmtq.fr",
+    app: require("./apps/tools/index.js")
+  }
 ];
 
 server.keys = config.session.keys;
@@ -28,7 +40,7 @@ server.use(
 );
 
 // Global logger
-server.use(async function(ctx, next) {
+server.use(async function (ctx, next) {
   const start = new Date();
   await next();
   const ms = new Date() - start;
@@ -39,11 +51,13 @@ server.use(async function(ctx, next) {
 
 server.use(session(server));
 
-server.use(async function(ctx, next) {
-  const app = _(vhostApps).find({ vhost: ctx.hostname }).app; // See: https://github.com/koajs/examples/tree/master/vhost
-  return (await app)
-    ? compose(app.middleware).apply(this, [ctx, next])
-    : next(); // https://stackoverflow.com/questions/48380123/object-isnt-an-instance-of-koa-on-the-require-side
+server.use(async function (ctx, next) {
+  const app = _(vhostApps).find({
+    vhost: ctx.hostname
+  }).app; // See: https://github.com/koajs/examples/tree/master/vhost
+  return (await app) ?
+    compose(app.middleware).apply(this, [ctx, next]) :
+    next(); // https://stackoverflow.com/questions/48380123/object-isnt-an-instance-of-koa-on-the-require-side
 });
 
 if (!module.parent) server.listen(process.env.PORT || 80);
