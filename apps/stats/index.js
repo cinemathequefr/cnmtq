@@ -14,8 +14,10 @@ var enforceHttps = require("koa-sslify");
 
 moment.tz.setDefault("Europe/Paris");
 moment.updateLocale("fr", config.momentLocaleFr);
-const syncJob = schedule.scheduleJob(
-  { hour: 22, minute: 45 },
+const syncJob = schedule.scheduleJob({
+    hour: 22,
+    minute: 45
+  },
   async function () {
     await sync.past();
     await controllers.mailReport.daily(
@@ -44,8 +46,14 @@ app.use(serve(__dirname + "/public"));
 
 app.use(
   views(__dirname + "/views", {
-    map: { html: "lodash" },
-    options: { partials: { header: "partials/header" } }
+    map: {
+      html: "lodash"
+    },
+    options: {
+      partials: {
+        header: "partials/header"
+      }
+    }
   })
 );
 

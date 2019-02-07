@@ -281,6 +281,10 @@ async function httpQuery(connectId, requestBody) {
     process.stdout.write(`OK\n${sessionId}\n`);
   } catch (e) {
     process.stdout.write("Echec\n");
+
+    // DEBUG
+    process.stdout.write(JSON.stringify(e, null, 2));
+
     throw "";
   }
 

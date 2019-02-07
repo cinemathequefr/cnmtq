@@ -1,6 +1,5 @@
 const sync = require("../services/sync");
 
-
 (async () => {
   var d = await sync.past();
   console.log("Finished");
@@ -15,4 +14,3 @@ const sync = require("../services/sync");
 //   await sync.run();
 //   console.log("Finished");
 // })();
-
