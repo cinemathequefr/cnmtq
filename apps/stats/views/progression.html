@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex, nofollow">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
     <!--<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans" rel="stylesheet">-->
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/main.css" />
     <title>Fréquentation en salles <%= refMonth.year() %> - StatsCF</title>
   </head>
   <body>
@@ -15,25 +15,50 @@
       <h2>Par mois, jusqu'à <%= refMonth.format("MMM YYYY") %> inclus</h2>
       <p>(Nombre d'entrées)</p>
       <% if (data.length === 0) { %>
-        <div class="seance">Pas de données disponibles.</div>
+      <div class="seance">Pas de données disponibles.</div>
       <% } else { %>
-        <table>
-          <tr>
-            <th style="width:40%;"></th>
-            <th style="width:20%;"><%= refMonth.year() %></th>
-            <th style="width:20%;"><%= refMonth.year() - 1 %></th>
-            <th style="width:20%;">Évol. <%= refMonth.year() - 1 %>-<%= refMonth.year() %></th>
-          </tr>
-          <% _.forEach(data, function (d) { %>
-            <tr>
-              <td class="center"><%= d[0] %></td>
-              <td class="right"><%= d[1] %></td>
-              <td class="right"><%= d[2] %></td>
-              <td class="right"><%= signed(format("##,#0%", d[3] * 100)) %></td>
-            </tr>
-          <% }); %>
-        </table>
+      <table>
+        <tr>
+          <th style="width:40%;"></th>
+          <th style="width:20%;"><%= refMonth.year() %></th>
+          <th style="width:20%;"><%= refMonth.year() - 1 %></th>
+          <th style="width:20%;">
+            Évol. <%= refMonth.year() - 1 %>-<%= refMonth.year() %>
+          </th>
+        </tr>
+        <% _.forEach(data, function (d) { %>
+        <tr>
+          <td class="center"><%= d[0] %></td>
+          <td class="right"><%= d[1] %></td>
+          <td class="right"><%= d[2] %></td>
+          <td class="right"><%= signed(format("##,#0%", d[3] * 100)) %></td>
+        </tr>
+        <% }); %>
+      </table>
+
       <% } %>
+      <div>
+        <p>Ce document indique&nbsp;:</p>
+        <ul>
+          <li>
+            Le nombre d'entrées en salles de cinéma pour les mois échus de
+            l'année en cours.
+          </li>
+          <li>
+            Un rappel du chiffre des mois correspondants pour l'année précédente
+            <em>n-1</em>, et le taux d'évolution de <em>n-1</em> à <em>n</em>.
+          </li>
+          <li>
+            Le cumul du nombre d'entrées depuis le début de l'année jusqu'au
+            dernier mois échu, le rappel sur l'année <em>n-1</em> et le taux
+            d'évolution.
+          </li>
+          <li>
+            Le cumul sur 12 mois en année glissante jusqu'au dernier mois échu,
+            le rappel sur l'années <em>n-1</em> et le taux d'évolution.
+          </li>
+        </ul>
+      </div>
     </div>
   </body>
 </html>

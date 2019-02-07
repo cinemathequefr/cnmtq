@@ -36,7 +36,9 @@ async function future() {
       fetchedSeancesData = (await query(dateFrom, dateTo))[1]; // On ne garde que les séances futures (index: 1)
 
       fetchedSeancesData = _(fetchedSeancesData)
-        .thru(d => _.fromPairs([[moment().format(), d]]))
+        .thru(d => _.fromPairs([
+          [moment().format(), d]
+        ]))
         .value();
 
       dbFuture.setState(fetchedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
@@ -100,8 +102,8 @@ async function past() {
 /**
  * query
  * Effectue une synchronisation des données de séances entre deux dates
- * @param dateFrom {string} Date de début de requête (YYYY-MM-DD)
- * @param dateTo {string} Date de fin de requête (YYYY-MM-DD)
+ * @param {string} dateFrom Date de début de requête (YYYY-MM-DD)
+ * @param {string} dateTo Date de fin de requête (YYYY-MM-DD)
  * @return {Promise}
  */
 async function query(dateFrom, dateTo) {
@@ -317,8 +319,8 @@ async function httpQuery(connectId, requestBody) {
 function calcDateFrom(seancesData) {
   return moment.max(
     _(seancesData)
-      .map(d => moment(d.date))
-      .value()
+    .map(d => moment(d.date))
+    .value()
   );
 }
 
@@ -333,12 +335,12 @@ function _csvToJson(csv, headers) {
   return new Promise((resolve, reject) => {
     var o = [];
     csvtojson({
-      delimiter: ";",
-      toArrayString: true,
-      noheader: false,
-      checkType: true, // Type inference
-      headers: headers
-    })
+        delimiter: ";",
+        toArrayString: true,
+        noheader: false,
+        checkType: true, // Type inference
+        headers: headers
+      })
       .fromString(csv)
       .on("json", row => o.push(row))
       .on("error", err => reject(err))
@@ -436,7 +438,6 @@ function readJsonFile(path) {
       if (err) {
         reject(err);
       } else {
-        // console.log(data);
         resolve(JSON.parse(data));
       }
     });
