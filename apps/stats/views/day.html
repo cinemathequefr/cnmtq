@@ -1,62 +1,70 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex, nofollow">
-    <link rel="stylesheet" href="../css/main.css">
-    <script src="../js/jquery.min.js"></script>
-    <script src="../js/jquery.eager-navbar.min.js"></script>
-    <script src="../js/main.js"></script>
-    <title><%= moment(date).format("dddd D MMMM YYYY") %></title>
-  </head>
-  <body>
-    <%= partials.header %>
-    <div class="main">
-      <h1><%= moment(date).format("dddd D MMMM YYYY") %></h1>
-      <% if (data.length === 0) { %>
-        <div class="seance">Pas de données disponibles pour cette date.</div>
-      <% } else { %>
-        <table>
-          <tr>
-            <td class="right">Séances</td>
-            <td class="right"><%= data.length %></td>
-          </tr>
-          <tr>
-            <td class="right">Nombre d'entrées</td>
-            <td class="right"><%= tickets = _(data).sumBy(d => d.tickets.compte) %></td>
-          </tr>
-          <tr>
-            <td class="right">Moyenne : entrées par séance</td>
-            <td class="right"><%= format('# ##0,0', tickets / data.length) %></td>
-          </tr>
-          <tr>
-            <td class="right">Moyenne : taux de remplissage</td>
-            <td class="right"><%= format('# ##0,0%', (tickets / _(data).sumBy(d => d.salle.capacity)) * 100) %></td>
-          </tr>
-        </table>
-        <% _.forEach(data, function (d) { %>
-        <div class="seance">
-          <table>
-            <tr>
-              <td colspan="2" class="sub"><%= moment(d.date).format("ddd D MMM HH[h]mm") %> - Salle <%= d.salle.code %> (<%= d.salle.capacity %>)</td>
-            <tr>
-            <tr>
-              <td class="seance-header">
-                <span class="title"><%= d.titre %></span>
-              </td>
-              <td class="seance-header right bold"><%= d.tickets.compte %></td>
-            </tr>
-            <% _.forEach(d.tickets.tarifCat, function (v) { %>
-            <tr>
-              <td class="right"><%= v[0] %></td>
-              <td class="right"><%= v[1] %></td>
-            </tr>
-            <% }); %>
-          </table>
-        </div>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="../css/main.css">
+  <script src="../js/jquery.min.js"></script>
+  <script src="../js/jquery.eager-navbar.min.js"></script>
+  <script src="../js/main.js"></script>
+  <title><%= moment(date).format("dddd D MMMM YYYY") %></title>
+</head>
+
+<body>
+  <%= partials.header %>
+  <div class="main">
+    <form id="datepicker" action="day" method="get">
+      <input type="date" name="date" id="date" value="<%= moment(date).format('YYYY-MM-DD') %>">
+      <input type="submit" value="OK">
+    </form>
+    <h1><%= moment(date).format("dddd D MMMM YYYY") %></h1>
+    <% if (data.length === 0) { %>
+    <div class="seance">Pas de données disponibles pour cette date.</div>
+    <% } else { %>
+    <table>
+      <tr>
+        <td class="right">Séances</td>
+        <td class="right"><%= data.length %></td>
+      </tr>
+      <tr>
+        <td class="right">Nombre d'entrées</td>
+        <td class="right"><%= tickets = _(data).sumBy(d => d.tickets.compte) %></td>
+      </tr>
+      <tr>
+        <td class="right">Moyenne : entrées par séance</td>
+        <td class="right"><%= format('# ##0,0', tickets / data.length) %></td>
+      </tr>
+      <tr>
+        <td class="right">Moyenne : taux de remplissage</td>
+        <td class="right"><%= format('# ##0,0%', (tickets / _(data).sumBy(d => d.salle.capacity)) * 100) %></td>
+      </tr>
+    </table>
+    <% _.forEach(data, function (d) { %>
+    <div class="seance">
+      <table>
+        <tr>
+          <td colspan="2" class="sub"><%= moment(d.date).format("ddd D MMM HH[h]mm") %> - Salle <%= d.salle.code %>
+            (<%= d.salle.capacity %>)</td>
+        <tr>
+        <tr>
+          <td class="seance-header">
+            <span class="title"><%= d.titre %></span>
+          </td>
+          <td class="seance-header right bold"><%= d.tickets.compte %></td>
+        </tr>
+        <% _.forEach(d.tickets.tarifCat, function (v) { %>
+        <tr>
+          <td class="right"><%= v[0] %></td>
+          <td class="right"><%= v[1] %></td>
+        </tr>
         <% }); %>
-      <% } %>
+      </table>
     </div>
-  </body>
+    <% }); %>
+    <% } %>
+  </div>
+</body>
+
 </html>

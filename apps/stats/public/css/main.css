@@ -4,8 +4,8 @@
   font-style: normal;
   font-weight: 300;
   src: local('IBM Plex Sans Light'), local('IBMPlexSans-Light'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300.woff2') format('woff2'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300.woff') format('woff');
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300.woff2') format('woff2'),
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300.woff') format('woff');
 }
 
 /* ibm-plex-sans-300italic */
@@ -14,8 +14,8 @@
   font-style: italic;
   font-weight: 300;
   src: local('IBM Plex Sans Light Italic'), local('IBMPlexSans-LightItalic'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300italic.woff2') format('woff2'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300italic.woff') format('woff');
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300italic.woff2') format('woff2'),
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300italic.woff') format('woff');
 }
 
 /* ibm-plex-sans-regular */
@@ -24,8 +24,8 @@
   font-style: normal;
   font-weight: 400;
   src: local('IBM Plex Sans'), local('IBMPlexSans'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-regular.woff2') format('woff2'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-regular.woff') format('woff');
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-regular.woff2') format('woff2'),
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-regular.woff') format('woff');
 }
 
 
@@ -35,8 +35,8 @@
   font-style: italic;
   font-weight: 400;
   src: local('IBM Plex Sans'), local('IBMPlexSans'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-italic.woff2') format('woff2'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-italic.woff') format('woff');
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-italic.woff2') format('woff2'),
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-italic.woff') format('woff');
 }
 
 /* ibm-plex-sans-600 */
@@ -45,8 +45,8 @@
   font-style: normal;
   font-weight: 600;
   src: local('IBM Plex Sans SemiBold'), local('IBMPlexSans-SemiBold'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600.woff2') format('woff2'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600.woff') format('woff');
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600.woff2') format('woff2'),
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600.woff') format('woff');
 }
 
 /* ibm-plex-sans-600italic */
@@ -55,8 +55,8 @@
   font-style: italic;
   font-weight: 600;
   src: local('IBM Plex Sans SemiBold Italic'), local('IBMPlexSans-SemiBoldItalic'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600italic.woff2') format('woff2'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600italic.woff') format('woff');
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600italic.woff2') format('woff2'),
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600italic.woff') format('woff');
 }
 
 /* ibm-plex-sans-700 */
@@ -65,8 +65,8 @@
   font-style: normal;
   font-weight: 700;
   src: local('IBM Plex Sans Bold'), local('IBMPlexSans-Bold'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700.woff2') format('woff2'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700.woff') format('woff');
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700.woff2') format('woff2'),
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700.woff') format('woff');
 }
 
 /* ibm-plex-sans-700italic */
@@ -75,8 +75,8 @@
   font-style: italic;
   font-weight: 700;
   src: local('IBM Plex Sans Bold Italic'), local('IBMPlexSans-BoldItalic'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700italic.woff2') format('woff2'),
-       url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700italic.woff') format('woff');
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700italic.woff2') format('woff2'),
+    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700italic.woff') format('woff');
 }
 
 /* ibm-plex-mono-regular - latin-ext_latin */
@@ -85,8 +85,8 @@
   font-style: normal;
   font-weight: 400;
   src: local('IBM Plex Mono'), local('IBMPlexMono'),
-       url('../fonts/ibm-plex-mono-v2-latin-ext_latin-regular.woff2') format('woff2'),
-       url('../fonts/ibm-plex-mono-v2-latin-ext_latin-regular.woff') format('woff');
+    url('../fonts/ibm-plex-mono-v2-latin-ext_latin-regular.woff2') format('woff2'),
+    url('../fonts/ibm-plex-mono-v2-latin-ext_latin-regular.woff') format('woff');
 }
 
 html {
@@ -104,36 +104,49 @@ input {
   font-family: "IBM Plex Sans", "Segoe UI", Calibri, Helvetica, sans-serif;
 }
 
-a:link, a:hover, a:active, a:visited {
+a:link,
+a:hover,
+a:active,
+a:visited {
   color: inherit;
 }
 
-a:link, a:visited { text-decoration: none; }
-a:hover, a:active { text-decoration: underline; }
+a:link,
+a:visited {
+  text-decoration: none;
+}
+
+a:hover,
+a:active {
+  text-decoration: underline;
+}
 
 
 .header-container {
   position: relative;
   width: 100%;
-  font-size: 0.938rem; font-weight: 400;
-  background-color: #eee; color: #222;
+  font-size: 0.938rem;
+  font-weight: 400;
+  background-color: #eee;
+  color: #222;
   border-bottom: solid 2px #999;
 }
 
 .header {
   display: flex;
-  width: 100%; height: 56px;
+  width: 100%;
+  height: 56px;
   flex-direction: row;
   align-items: center;
   box-sizing: border-box;
 }
 
-.header > div {
+.header>div {
   flex: 1;
   padding: 0 12px;
 }
 
-.header > div:nth-child(2) {
+.header>div:nth-child(2) {
   text-align: right;
 }
 
@@ -147,7 +160,8 @@ a:hover, a:active { text-decoration: underline; }
 
 ul.menu {
   display: inline-block;
-  margin: 0; padding: 0;
+  margin: 0;
+  padding: 0;
   list-style-type: none;
 }
 
@@ -156,6 +170,7 @@ ul.menu li {
   display: inline-block;
   padding: 0 2px;
 }
+
 /*
 .logout {
   position: absolute;
@@ -165,38 +180,51 @@ ul.menu li {
 */
 
 .apptitle {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  font-weight: 600; font-size: 1rem;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 h1 {
-  font-size: 1.25rem; font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 h2 {
-  font-size: 1rem; font-weight: 600;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 
 .main {
-  width: 1000px; max-width: 100%;
-  margin: 24px auto 48px auto; padding: 12px;
+  width: 1000px;
+  max-width: 100%;
+  margin: 24px auto 48px auto;
+  padding: 12px;
   background-color: #fff;
   box-sizing: border-box;
 }
 
 .seance-header {
-  font-size: 1rem; font-weight: 600;
+  font-size: 1rem;
+  font-weight: 600;
   background-color: #66af63;
   /*background-color: #64b09c;*/
 }
 
 table {
-  width: 100%; max-width: 700px; border-collapse: collapse; margin: 0 0 24px 0;
+  width: 100%;
+  max-width: 700px;
+  border-collapse: collapse;
+  margin: 0 0 24px 0;
 }
 
-td, th  {
-  border: solid 1px #333; padding: 4px;
+td,
+th {
+  border: solid 1px #333;
+  padding: 4px;
 }
 
 td:nth-child(2) {
@@ -204,8 +232,10 @@ td:nth-child(2) {
 }
 
 td.sub {
-  border: none; padding: 0 0 2px 0;
-  font-weight: 600; font-size: .938rem;
+  border: none;
+  padding: 0 0 2px 0;
+  font-weight: 600;
+  font-size: .938rem;
 
 }
 
@@ -213,16 +243,48 @@ th {
   font-weight: 600;
 }
 
-.title { font-weight: 600; }
-.id-seance { font-size: 1rem; }
+.title {
+  font-weight: 600;
+}
 
-.right { text-align: right; }
-.center { text-align: center; }
-.bold { font-weight: 700; }
-.small { font-size: 0.85em; }
+.id-seance {
+  font-size: 1rem;
+}
+
+.right {
+  text-align: right;
+}
+
+.center {
+  text-align: center;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.small {
+  font-size: 0.85em;
+}
 
 
 .id-seance {
   color: #195916;
 }
 
+#datepicker {
+  margin-bottom: 24px;
+}
+
+#datepicker>#date {
+  padding: 4px 12px;
+  border: solid 1px #999;
+}
+
+#datepicker input[type=submit] {
+  padding: 5px 12px;
+  background-color: #ccc;
+  color: #000;
+  font-weight: 600;
+  border: none;
+}
