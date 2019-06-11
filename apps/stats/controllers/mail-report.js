@@ -25,28 +25,34 @@ async function daily(queryDate, recipients) {
     })
     .map(d =>
       _({})
-        .assign(d, {
-          salle: _(d.salle)
-            .assign({ capacity: config.capacity[d.salle.id] })
-            .value(),
-          tickets: _(d.tickets)
-            .assign({ tarifCat: tarifCat(d.tickets.tarif, config.tarifCats) })
-            .value()
-        })
-        .value()
+      .assign(d, {
+        salle: _(d.salle)
+          .assign({
+            capacity: config.capacity[d.salle.id]
+          })
+          .value(),
+        tickets: _(d.tickets)
+          .assign({
+            tarifCat: tarifCat(d.tickets.tarif, config.tarifCats)
+          })
+          .value()
+      })
+      .value()
     )
     .value();
 
   if (data.length === 0) {
     console.log(`${moment().format()} : Aucune séance trouvée pour ce jour : envoi annulé.`);
     return;
-  } 
+  }
 
   data = _({})
-    .assign(extendDataForViews(data), { date: queryDate })
+    .assign(extendDataForViews(data), {
+      date: queryDate
+    })
     .value();
 
-  return new Promise(async function(resolve, reject) {
+  return new Promise(async function (resolve, reject) {
     try {
       html = await consolidate.lodash(
         __dirname + "/../views/mail-html-day.html",
