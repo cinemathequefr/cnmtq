@@ -242,6 +242,7 @@ async function connect(url, login, password) {
       simple: false,
       resolveWithFullResponse: true // https://github.com/request/request-promise#get-the-full-response-instead-of-just-the-body
     });
+
     var connectId = res.headers.location.match(/sid=([a-z\d]+)$/)[1];
     process.stdout.write(`OK\n${connectId}\n`);
     return connectId;

@@ -5,7 +5,7 @@ const config = require("../config");
 const extendDataForViews = require("../lib/extendDataForViews");
 const sync = require("../services/sync");
 
-module.exports = async function(ctx, next) {
+module.exports = async function (ctx, next) {
   var data;
 
   if (ctx.isAuthenticated() === false) {
@@ -25,7 +25,9 @@ module.exports = async function(ctx, next) {
       }
     }
     data = dbFuture.getState();
-    return ctx.render("preventes", extendDataForViews(data, { nextSync: nxt }));
+    return ctx.render("preventes", extendDataForViews(data, {
+      nextSync: nxt
+    }));
   } catch (e) {
     console.log(e);
   }
@@ -41,8 +43,8 @@ module.exports = async function(ctx, next) {
 function nextSyncAllowed() {
   var nextSyncDateTime = moment(
     _(dbFuture.getState())
-      .keys()
-      .value()[0]
+    .keys()
+    .value()[0]
   ).add(config.sync.syncThrottleMinutes, "minutes");
 
   var status = moment().isAfter(nextSyncDateTime, "second");
