@@ -1,6 +1,7 @@
 /**
  * Script CLI pour envoyer un rapport quotidien par mail
  * node mail {date} {toAll}
+ * Exemple : `node mail 2019-07-11 --all`
  * @param {string} date Date ISO du rapport à envoyer
  * @param {string} "--all" : si ce flag est présent, envoyer à tous les destinataires listés (sinon seulement à l'adresse de test)
  */
