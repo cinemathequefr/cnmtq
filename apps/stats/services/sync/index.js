@@ -240,10 +240,15 @@ async function connect(url, login, password) {
       },
       body: "login=" + login + "&motPasse=" + password + "&Submit=Valider",
       simple: false,
+      jar: true,
       resolveWithFullResponse: true // https://github.com/request/request-promise#get-the-full-response-instead-of-just-the-body
     });
 
-    var connectId = res.headers.location.match(/sid=([a-z\d]+)$/)[1];
+    // 2019-07-12 : mise à jour pour suivre la modification du processus de connexion côté serveur
+    var connectId = _(res.headers["set-cookie"]).filter(d => _.startsWith(d, config.sync.cookieKey)).value()[0];
+    connectId = connectId.match(/=([a-z\d]+);/)[1];
+    // var connectId = res.headers.location.match(/sid=([a-z\d]+)$/)[1];
+
     process.stdout.write(`OK\n${connectId}\n`);
     return connectId;
   } catch (e) {
