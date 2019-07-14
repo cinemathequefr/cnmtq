@@ -24,7 +24,7 @@ async function future() {
   var dateTo;
   var fetchedSeancesData;
 
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async function(resolve, reject) {
     try {
       dateFrom = currentDate.format("YYYY-MM-DD");
       dateTo = currentDate
@@ -36,9 +36,7 @@ async function future() {
       fetchedSeancesData = (await query(dateFrom, dateTo))[1]; // On ne garde que les séances futures (index: 1)
 
       fetchedSeancesData = _(fetchedSeancesData)
-        .thru(d => _.fromPairs([
-          [moment().format(), d]
-        ]))
+        .thru(d => _.fromPairs([[moment().format(), d]]))
         .value();
 
       dbFuture.setState(fetchedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
@@ -53,7 +51,7 @@ async function future() {
 /**
  * past
  * Exécute une requête sur les séances passées (depuis la dernière synchro) et écrit le fichier seances.json
- * 
+ *
  */
 async function past() {
   var currentDate = moment().startOf("day"); // On capture la date courante
@@ -63,7 +61,7 @@ async function past() {
   var fetchedSeancesData;
   var updatedSeancesData;
 
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async function(resolve, reject) {
     try {
       existingSeancesData = await Promise.all([
         readJsonFile(__dirname + "/../../data/seances.json"), // données passées
@@ -89,7 +87,7 @@ async function past() {
 
       console.log(
         `${moment().format()} : Séances passées : Synchronisation terminée, ${
-        fetchedSeancesData[0].length
+          fetchedSeancesData[0].length
         } séances ajoutées ou réécrites.`
       );
       resolve();
@@ -113,7 +111,7 @@ async function query(dateFrom, dateTo) {
   var fetchedSeancesData;
   var fetchedSeancesDataSplit;
 
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async function(resolve, reject) {
     try {
       connectId = await connect(
         config.sync.connectUrl,
@@ -163,7 +161,7 @@ async function run() {
   var dateFrom, dateTo;
   var currentDate = moment().startOf("day"); // On capture la date courante
 
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async function(resolve, reject) {
     try {
       existingSeancesData = await Promise.all([
         readJsonFile(__dirname + "/../../data/seances.json"), // données passées
@@ -208,7 +206,7 @@ async function run() {
 
       console.log(
         `${moment().format()} : Synchronisation terminée, ${
-        fetchedSeancesDataSplit[0].length
+          fetchedSeancesDataSplit[0].length
         } séances ajoutées ou réécrites.`
       );
       resolve();
@@ -229,30 +227,60 @@ async function run() {
  * @date 2018-02-07 : utilise async/await
  */
 async function connect(url, login, password) {
-  process.stdout.write("Connexion au serveur : ");
+  let j = request.jar(); // https://github.com/request/request#requestjar
+
+  console.log("Connexion au serveur : ");
+  // console.log("Connexion au serveur : ");
   try {
-    var res = await request({
+    // 2019-07-13 : Etape 0 à ajouter : simple requête sur la page de login, uniquement pour obtenir la valeur du cookie
+    let res = await request({
+      method: "GET",
+      uri: config.sync.homeUrl,
+      simple: false,
+      jar: j,
+      resolveWithFullResponse: true // https://github.com/request/request-promise#get-the-full-response-instead-of-just-the-body
+    });
+
+    console.log(JSON.stringify(res, null, 2));
+
+    let connectId = _(res.headers["set-cookie"])
+      .filter(d => _.startsWith(d, config.sync.cookieKey))
+      .value()[0];
+
+    connectId = connectId.match(/=([a-z\d]+);/)[1];
+
+    // Etape 1 : connexion au serveur
+    // 2019-07-14 : mise à jour du processus de connexion
+    res = await request({
       method: "POST",
       uri: url,
       followRedirect: true,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       },
-      body: "login=" + login + "&motPasse=" + password + "&Submit=Valider",
+      body: `login=${login}&motPasse=${password}&sid=${connectId}&Submit=Valider`,
+      // body: "login=" + login + "&motPasse=" + password + "&Submit=Valider",
       simple: false,
-      jar: true,
+      jar: j,
       resolveWithFullResponse: true // https://github.com/request/request-promise#get-the-full-response-instead-of-just-the-body
     });
 
-    // 2019-07-12 : mise à jour pour suivre la modification du processus de connexion côté serveur
-    var connectId = _(res.headers["set-cookie"]).filter(d => _.startsWith(d, config.sync.cookieKey)).value()[0];
-    connectId = connectId.match(/=([a-z\d]+);/)[1];
+    // // 2019-07-12 : mise à jour pour suivre la modification du processus de connexion côté serveur
+    // var connectId = _(res.headers["set-cookie"])
+    //   .filter(d => _.startsWith(d, config.sync.cookieKey))
+    //   .value()[0];
+    // connectId = connectId.match(/=([a-z\d]+);/)[1];
+
+    // // Ancienne méthode
     // var connectId = res.headers.location.match(/sid=([a-z\d]+)$/)[1];
 
-    process.stdout.write(`OK\n${connectId}\n`);
+    console.log(`OK\n${connectId}\n`);
+    // console.log(`OK\n${connectId}\n`);
     return connectId;
   } catch (e) {
-    process.stdout.write("Echec\n");
+    console.log("Echec\n");
+    // console.log("Echec\n");
+    console.log(e);
     throw "";
   }
 }
@@ -272,9 +300,13 @@ async function httpQuery(connectId, requestBody) {
   var res;
 
   // Obtention de l'id de session
-  process.stdout.write("Envoi de la requête : ");
+  console.log("Envoi de la requête : ");
+
+  console.log(`connectId: ${connectId}`);
+  console.log(`requestBody: ${requestBody}`);
+
   try {
-    sessionId = (await request({
+    res = await request({
       method: "POST",
       uri: config.sync.queryUrl,
       headers: {
@@ -283,19 +315,22 @@ async function httpQuery(connectId, requestBody) {
       },
       json: true,
       body: requestBody
-    })).data.sessionId;
-    process.stdout.write(`OK\n${sessionId}\n`);
+    });
+
+    console.log(`res.data: ${res.data}`);
+
+    sessionId = res.data.sessionId;
+
+    console.log(`OK\n${sessionId}\n`);
   } catch (e) {
-    process.stdout.write("Echec\n");
+    console.log("Echec\n");
+    console.log(JSON.stringify(e, null, 2));
 
-    // DEBUG
-    process.stdout.write(JSON.stringify(e, null, 2));
-
-    throw "";
+    throw e;
   }
 
   // Récupération des données
-  process.stdout.write("Récupération des données : ");
+  console.log("Récupération des données : ");
   try {
     res = await request({
       method: "GET",
@@ -309,13 +344,13 @@ async function httpQuery(connectId, requestBody) {
 
     if (res.headers["content-disposition"].substring(0, 10) === "attachment") {
       // Vérifie que la réponse est un attachement
-      process.stdout.write("OK\n");
+      console.log("OK\n");
       return res.body; // TODO: convertir en utf8
     } else {
       throw "";
     }
   } catch (e) {
-    process.stdout.write("Echec\n");
+    console.log("Echec\n");
     throw "";
   }
 }
@@ -329,8 +364,8 @@ async function httpQuery(connectId, requestBody) {
 function calcDateFrom(seancesData) {
   return moment.max(
     _(seancesData)
-    .map(d => moment(d.date))
-    .value()
+      .map(d => moment(d.date))
+      .value()
   );
 }
 
@@ -345,12 +380,12 @@ function _csvToJson(csv, headers) {
   return new Promise((resolve, reject) => {
     var o = [];
     csvtojson({
-        delimiter: ";",
-        toArrayString: true,
-        noheader: false,
-        checkType: true, // Type inference
-        headers: headers
-      })
+      delimiter: ";",
+      toArrayString: true,
+      noheader: false,
+      checkType: true, // Type inference
+      headers: headers
+    })
       .fromString(csv)
       .on("json", row => o.push(row))
       .on("error", err => reject(err))
@@ -368,13 +403,13 @@ function aggregateTicketsToSeances(data) {
   return _(data)
     .groupBy(d => d.idTicket) // Dédoublonnage des séances sur idTicket
     .mapValues(d => d[0])
-    .map(function (item) {
+    .map(function(item) {
       return _.assign({}, item, {
         montant: parseFloat((item.montant || "0").replace(",", "."))
       });
     })
     .groupBy("idSeance")
-    .map(function (items) {
+    .map(function(items) {
       return {
         idSeance: items[0].idSeance,
         idManif: items[0].idManif,
@@ -389,14 +424,14 @@ function aggregateTicketsToSeances(data) {
             .mapValues(item => item.length)
             .value(),
           web: _(items)
-            .filter(function (item) {
+            .filter(function(item) {
               return _.indexOf(config.codesCanalWeb, item.idCanal) > -1;
             })
             .value().length // Codes canal de vente web
         }
       };
     })
-    .filter(function (d) {
+    .filter(function(d) {
       return !_.isUndefined(d.salle);
     }) // Retire les items hors salle de cinéma
     .sortBy("date")
