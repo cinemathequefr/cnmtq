@@ -9,13 +9,34 @@ const privateRouter = new Router();
 
 publicRouter.redirect("/", "/day");
 publicRouter.get("/login", controllers.login);
+
 publicRouter.post(
   "/login",
-  passport.authenticate("local", {
-    successRedirect: "/day",
-    failureRedirect: "/login"
-  })
+  (ctx, next) => {
+    passport.authenticate("local", function (err, user) {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        return ctx.redirect("/login");
+      }
+      ctx.login(user, err => {
+        if (err) {
+          return next(err);
+        }
+        return ctx.redirect(ctx.cookies.get("redir") || "/day");
+      })
+    })(ctx, next)
+  }
 );
+
+// publicRouter.post(
+//   "/login",
+//   passport.authenticate("local", {
+//     successRedirect: "/day",
+//     failureRedirect: "/login"
+//   })
+// );
 
 publicRouter.get("/logout", controllers.logout);
 privateRouter.get("/day", controllers.day);

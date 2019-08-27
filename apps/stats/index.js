@@ -64,6 +64,7 @@ app.use(router.public.routes());
 app.use(async (ctx, next) => {
   await next();
   if (ctx.status === 401) {
+    ctx.cookies.set("redir", ctx.originalUrl);
     ctx.redirect("/login");
   }
 });
