@@ -7,6 +7,12 @@ const config = require("../../config");
 const dbSeances = require("../db")("seances");
 const dbFuture = require("../db")("future");
 
+module.exports = {
+  query: query,
+  past: past,
+  future: future
+  // , run: run
+};
 
 /**
  * future
@@ -93,8 +99,6 @@ async function past() {
   });
 }
 
-
-
 /**
  * query
  * Effectue une synchronisation des données de séances entre deux dates
@@ -136,14 +140,87 @@ async function query(dateFrom, dateTo) {
   });
 }
 
+/**
+ * run
+ * Effectue une synchronisation des données de séances :
+ * - Détermine la période de requête
+ * - Effectue la requête distante
+ * - Transforme les données (tickets -> séances)
+ * - Sérialise la mise à jour (fichier JSON)
+ * @return { Promise }
+ * @TODO utiliser le fichier de config pour indiquer le chemin du fichier JSON de données.
+ * @IMPORTANT legacy code : désormais séparé entre query (requête serveur) et past/future (appellent la requête serveur et enregistrent les données)
+ * @IMPORTANT mais toujours utilisé en production par le scheduler.
+ */
+async function run() {
+  var connectId;
+  var fetchedTicketsCsv;
+  var fetchedTicketsJson;
+  var fetchedSeancesData;
+  var fetchedSeancesDataSplit; // Données de séances obtenues de la requête distante et séparées en passées et futures
+  var existingSeancesData; // Données de séances existantes (= fichier) (passées et futures: [[], []])
+  var updatedSeancesData;
+  var dateFrom, dateTo;
+  var currentDate = moment().startOf("day"); // On capture la date courante
 
+  return new Promise(async function (resolve, reject) {
+    try {
+      existingSeancesData = await Promise.all([
+        readJsonFile(__dirname + "/../../data/seances.json"), // données passées
+        [] // TODO: données futures
+      ]);
 
+      dateFrom = calcDateFrom(existingSeancesData[0]).format("YYYY-MM-DD");
+      dateTo = currentDate
+        .clone()
+        .add(config.sync.lookAheadDays, "days")
+        .format("YYYY-MM-DD"); // 2018-03-06 : on prend pour date de fin de requête la date du jour (+ lookAheadDays)
+      connectId = await connect(
+        config.sync.connectUrl,
+        config.sync.login,
+        config.sync.password
+      );
+      fetchedTicketsCsv = await query(
+        connectId,
+        _.template(config.sync.requestTemplates.tickets)({
+          dateFrom: dateFrom,
+          dateTo: dateTo
+        })
+      );
+      fetchedTicketsJson = await _csvToJson(
+        fetchedTicketsCsv,
+        config.sync.jsonHeaders["tickets"]
+      );
+      fetchedSeancesData = aggregateTicketsToSeances(fetchedTicketsJson);
+      fetchedSeancesDataSplit = splitSeances(fetchedSeancesData); // => [[passées], [futures]]
+      updatedSeancesData = mergeSeances(
+        existingSeancesData[0],
+        fetchedSeancesDataSplit[0]
+      );
+
+      dbSeances.setState(updatedSeancesData); // Update data in lowdb (https://github.com/typicode/lowdb)
+
+      // TODO: utiliser la méthode `write` de lowdb (elle devrait être est asynchrone) ?
+      await writeJsonFile(
+        __dirname + "/../../data/seances.json",
+        updatedSeancesData
+      );
+
+      console.log(
+        `${moment().format()} : Synchronisation terminée, ${
+        fetchedSeancesDataSplit[0].length
+        } séances ajoutées ou réécrites.`
+      );
+      resolve();
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
 
 /**
  * connect
- * (Etape 1)
- * Effectue une requête de connexion sur le serveur distant.
- * En cas de réussite, un cookie est inscrit (géré automatiquement par jar)
+ * Tente une connexion/authentification sur le serveur distant et renvoie l'ID de connexion en cas de réussite
  * @param url { String }
  * @param login { String }
  * @param password { String }
@@ -161,16 +238,16 @@ async function connect(url, login, password) {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       },
-      body: `login=${login}&motPasse=${password}&Submit=Valider`,
+      body: "login=" + login + "&motPasse=" + password + "&Submit=Valider",
       simple: false,
       jar: true,
-      resolveWithFullResponse: true
+      resolveWithFullResponse: true // https://github.com/request/request-promise#get-the-full-response-instead-of-just-the-body
     });
 
-    // 2019-07-12 : Mise à jour pour suivre la modification du processus de connexion côté serveur.
-    // 2019-11-04 : On affiche connectId pour s'assurer qu'il a bien été inscrit, mais il est géré par le cookie jar.
+    // 2019-07-12 : mise à jour pour suivre la modification du processus de connexion côté serveur
     var connectId = _(res.headers["set-cookie"]).filter(d => _.startsWith(d, config.sync.cookieKey)).value()[0];
     connectId = connectId.match(/=([a-z\d]+);/)[1];
+    // var connectId = res.headers.location.match(/sid=([a-z\d]+)$/)[1];
 
     process.stdout.write(`OK\n${connectId}\n`);
     return connectId;
@@ -180,47 +257,55 @@ async function connect(url, login, password) {
   }
 }
 
-
 /**
  * httpQuery
- * (Etapes 2 et 3)
- * Fait une requête distante pour obtenir des données
- * 2019-11-04 : connectId n'est plus nécessaire.
+ * Fait une requête distante
  * @param queryUrl {String} URL de la requête
  * @param requestBody {String} Corps de la requête (à construite à partir de templates présents dans le fichier config)
  * @return {String} Chaîne de type csv
  * @date 2017-06-13 : version initiale
  * @date 2018-02-07 : utilise async/await
- * @todo Convertir la réponse en utf-8
+ * @todo Convertir la réponse en utf8
  */
 async function httpQuery(connectId, requestBody) {
-  let sessionId;
-  let res;
+  var sessionId;
+  var res;
 
-  // Envoi de la requête (= génère les données sur le serveur distant) et récupération du jeton `sessionId`.
+  // Obtention de l'id de session
   process.stdout.write("Envoi de la requête : ");
   try {
-    res = (await request({
+    let res = (await request({
       method: "POST",
-      uri: config.sync.queryUrl,
+      uri: config.sync.queryUrl, // https://admin.digitick.com/index.php4?p=991&action=export
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-        // , Cookie: config.sync.cookieKey + "=" + connectId
+        "Content-Type": "application/x-www-form-urlencoded",
+        Cookie: config.sync.cookieKey + "=" + connectId
       },
-      json: true,
-      body: requestBody,
-      simple: false,
-      jar: true,
-      resolveWithFullResponse: true
+      // json: true,
+      body: requestBody
     }));
 
-    sessionId = res.body.data.sessionId;
+    console.log(res);
 
+
+
+    // sessionId = (await request({
+    //   method: "POST",
+    //   uri: config.sync.queryUrl,
+    //   headers: {
+    //     "Content-Type": "application/x-www-form-urlencoded",
+    //     Cookie: config.sync.cookieKey + "=" + connectId
+    //   },
+    //   json: true,
+    //   body: requestBody
+    // })).data.sessionId;
     process.stdout.write(`OK\n${sessionId}\n`);
   } catch (e) {
     process.stdout.write("Echec\n");
+
     // DEBUG
     process.stdout.write(JSON.stringify(e, null, 2));
+
     throw "";
   }
 
@@ -230,19 +315,17 @@ async function httpQuery(connectId, requestBody) {
     res = await request({
       method: "GET",
       uri: config.sync.queryUrl + "&op=dl&format=csv&id=" + sessionId,
-      simple: false,
-      // headers: {
-      //   Cookie: config.sync.cookieKey + "=" + connectId
-      // },
+      headers: {
+        Cookie: config.sync.cookieKey + "=" + connectId
+      },
       json: false,
-      jar: true,
       resolveWithFullResponse: true // https://github.com/request/request-promise#get-the-full-response-instead-of-just-the-body
     });
 
     if (res.headers["content-disposition"].substring(0, 10) === "attachment") {
       // Vérifie que la réponse est un attachement
       process.stdout.write("OK\n");
-      return res.body; // Données csv. TODO: convertir en utf-8
+      return res.body; // TODO: convertir en utf8
     } else {
       throw "";
     }
@@ -251,8 +334,6 @@ async function httpQuery(connectId, requestBody) {
     throw "";
   }
 }
-
-
 
 /* calcDateFrom
  * Actuellement, on considère que la date de début de requête doit être la date des dernières données disponibles.
@@ -405,9 +486,3 @@ function writeJsonFile(path, data) {
     });
   });
 }
-
-module.exports = {
-  query: query,
-  past: past,
-  future: future
-};
