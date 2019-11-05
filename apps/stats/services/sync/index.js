@@ -47,7 +47,7 @@ async function future() {
 /**
  * past
  * Exécute une requête sur les séances passées (depuis la dernière synchro) et écrit le fichier seances.json
- * 
+ *
  */
 async function past() {
   var currentDate = moment().startOf("day"); // On capture la date courante
@@ -83,7 +83,7 @@ async function past() {
 
       console.log(
         `${moment().format()} : Séances passées : Synchronisation terminée, ${
-        fetchedSeancesData[0].length
+          fetchedSeancesData[0].length
         } séances ajoutées ou réécrites.`
       );
       resolve();
@@ -148,9 +148,31 @@ async function query(dateFrom, dateTo) {
  * @date 2018-02-07 : utilise async/await
  */
 async function connect(url, login, password) {
-  process.stdout.write("Connexion au serveur : ");
+  let j = request.jar(); // https://github.com/request/request#requestjar
+
+  console.log("Connexion au serveur : ");
+  // console.log("Connexion au serveur : ");
   try {
-    var res = await request({
+    // 2019-07-13 : Etape 0 à ajouter : simple requête sur la page de login, uniquement pour obtenir la valeur du cookie
+    let res = await request({
+      method: "GET",
+      uri: config.sync.homeUrl,
+      simple: false,
+      jar: j,
+      resolveWithFullResponse: true // https://github.com/request/request-promise#get-the-full-response-instead-of-just-the-body
+    });
+
+    console.log(JSON.stringify(res, null, 2));
+
+    let connectId = _(res.headers["set-cookie"])
+      .filter(d => _.startsWith(d, config.sync.cookieKey))
+      .value()[0];
+
+    connectId = connectId.match(/=([a-z\d]+);/)[1];
+
+    // Etape 1 : connexion au serveur
+    // 2019-07-14 : mise à jour du processus de connexion
+    res = await request({
       method: "POST",
       uri: url,
       followRedirect: true,
@@ -169,7 +191,9 @@ async function connect(url, login, password) {
     process.stdout.write(`OK\n${connectId}\n`);
     return connectId;
   } catch (e) {
-    process.stdout.write("Echec\n");
+    console.log("Echec\n");
+    // console.log("Echec\n");
+    console.log(e);
     throw "";
   }
 }
@@ -217,7 +241,7 @@ async function httpQuery(connectId, requestBody) {
   }
 
   // Récupération des données
-  process.stdout.write("Récupération des données : ");
+  console.log("Récupération des données : ");
   try {
     res = await request({
       method: "GET",
@@ -236,7 +260,7 @@ async function httpQuery(connectId, requestBody) {
       throw "";
     }
   } catch (e) {
-    process.stdout.write("Echec\n");
+    console.log("Echec\n");
     throw "";
   }
 }
