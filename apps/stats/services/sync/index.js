@@ -93,8 +93,6 @@ async function past() {
   });
 }
 
-
-
 /**
  * query
  * Effectue une synchronisation des données de séances entre deux dates
@@ -136,14 +134,12 @@ async function query(dateFrom, dateTo) {
   });
 }
 
-
-
-
 /**
  * connect
  * (Etape 1)
  * Effectue une requête de connexion sur le serveur distant.
- * En cas de réussite, un cookie est inscrit (géré automatiquement par jar)
+ * En cas de réussite, un cookie est inscrit (géré automatiquement et globalement par jar).
+ * 2019-11-05 : La valeur de retour `connectId` n'est plus utile. La finalité de cette fonction est seulement la mise en place des cookies, gérés au niveau global par jar.
  * @param url { String }
  * @param login { String }
  * @param password { String }
@@ -152,7 +148,7 @@ async function query(dateFrom, dateTo) {
  * @date 2018-02-07 : utilise async/await
  */
 async function connect(url, login, password) {
-  process.stdout.write("Connexion au serveur : ");
+  console.log("Connexion au serveur : ");
   try {
     var res = await request({
       method: "POST",
@@ -167,19 +163,16 @@ async function connect(url, login, password) {
       resolveWithFullResponse: true
     });
 
-    // 2019-07-12 : Mise à jour pour suivre la modification du processus de connexion côté serveur.
-    // 2019-11-04 : On affiche connectId pour s'assurer qu'il a bien été inscrit, mais il est géré par le cookie jar.
+    // 2019-11-04 : On affiche connectId pour s'assurer qu'il a bien été trouvé, mais il est géré par le cookie jar.
     var connectId = _(res.headers["set-cookie"]).filter(d => _.startsWith(d, config.sync.cookieKey)).value()[0];
     connectId = connectId.match(/=([a-z\d]+);/)[1];
-
-    process.stdout.write(`OK\n${connectId}\n`);
+    console.log(`OK\n${connectId}\n`);
     return connectId;
   } catch (e) {
-    process.stdout.write("Echec\n");
+    console.log("Echec\n");
     throw "";
   }
 }
-
 
 /**
  * httpQuery
@@ -198,14 +191,13 @@ async function httpQuery(connectId, requestBody) {
   let res;
 
   // Envoi de la requête (= génère les données sur le serveur distant) et récupération du jeton `sessionId`.
-  process.stdout.write("Envoi de la requête : ");
+  console.log("Envoi de la requête : ");
   try {
     res = (await request({
       method: "POST",
       uri: config.sync.queryUrl,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
-        // , Cookie: config.sync.cookieKey + "=" + connectId
       },
       json: true,
       body: requestBody,
@@ -216,24 +208,21 @@ async function httpQuery(connectId, requestBody) {
 
     sessionId = res.body.data.sessionId;
 
-    process.stdout.write(`OK\n${sessionId}\n`);
+    console.log(`OK\n${sessionId}\n`);
   } catch (e) {
-    process.stdout.write("Echec\n");
+    console.log("Echec\n");
     // DEBUG
-    process.stdout.write(JSON.stringify(e, null, 2));
+    console.log(JSON.stringify(e, null, 2));
     throw "";
   }
 
   // Récupération des données
-  process.stdout.write("Récupération des données : ");
+  console.log("Récupération des données : ");
   try {
     res = await request({
       method: "GET",
       uri: config.sync.queryUrl + "&op=dl&format=csv&id=" + sessionId,
       simple: false,
-      // headers: {
-      //   Cookie: config.sync.cookieKey + "=" + connectId
-      // },
       json: false,
       jar: true,
       resolveWithFullResponse: true // https://github.com/request/request-promise#get-the-full-response-instead-of-just-the-body
@@ -241,18 +230,16 @@ async function httpQuery(connectId, requestBody) {
 
     if (res.headers["content-disposition"].substring(0, 10) === "attachment") {
       // Vérifie que la réponse est un attachement
-      process.stdout.write("OK\n");
+      console.log("OK\n");
       return res.body; // Données csv. TODO: convertir en utf-8
     } else {
       throw "";
     }
   } catch (e) {
-    process.stdout.write("Echec\n");
+    console.log("Echec\n");
     throw "";
   }
 }
-
-
 
 /* calcDateFrom
  * Actuellement, on considère que la date de début de requête doit être la date des dernières données disponibles.

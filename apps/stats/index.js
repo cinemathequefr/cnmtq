@@ -31,11 +31,11 @@ const app = (module.exports = new Koa());
 
 // Enforce https (https://github.com/turboMaCk/koa-sslify)
 // Désactiver pour tests sur localhost
-// app.use(
-//   enforceHttps({
-//     trustProtoHeader: true
-//   })
-// );
+app.use(
+  enforceHttps({
+    trustProtoHeader: true
+  })
+);
 
 // Body parser + Passport
 app.use(bodyParser());
