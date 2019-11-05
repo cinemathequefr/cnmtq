@@ -148,7 +148,7 @@ async function query(dateFrom, dateTo) {
  * @date 2018-02-07 : utilise async/await
  */
 async function connect(url, login, password) {
-  console.log("Connexion au serveur : ");
+  process.stdout.write("Connexion au serveur : ");
   try {
     var res = await request({
       method: "POST",
@@ -166,10 +166,10 @@ async function connect(url, login, password) {
     // 2019-11-04 : On affiche connectId pour s'assurer qu'il a bien été trouvé, mais il est géré par le cookie jar.
     var connectId = _(res.headers["set-cookie"]).filter(d => _.startsWith(d, config.sync.cookieKey)).value()[0];
     connectId = connectId.match(/=([a-z\d]+);/)[1];
-    console.log(`OK\n${connectId}\n`);
+    process.stdout.write(`OK\n${connectId}\n`);
     return connectId;
   } catch (e) {
-    console.log("Echec\n");
+    process.stdout.write("Echec\n");
     throw "";
   }
 }
@@ -191,7 +191,7 @@ async function httpQuery(connectId, requestBody) {
   let res;
 
   // Envoi de la requête (= génère les données sur le serveur distant) et récupération du jeton `sessionId`.
-  console.log("Envoi de la requête : ");
+  process.stdout.write("Envoi de la requête : ");
   try {
     res = (await request({
       method: "POST",
@@ -208,16 +208,16 @@ async function httpQuery(connectId, requestBody) {
 
     sessionId = res.body.data.sessionId;
 
-    console.log(`OK\n${sessionId}\n`);
+    process.stdout.write(`OK\n${sessionId}\n`);
   } catch (e) {
-    console.log("Echec\n");
+    process.stdout.write("Echec\n");
     // DEBUG
-    console.log(JSON.stringify(e, null, 2));
+    process.stdout.write(JSON.stringify(e, null, 2));
     throw "";
   }
 
   // Récupération des données
-  console.log("Récupération des données : ");
+  process.stdout.write("Récupération des données : ");
   try {
     res = await request({
       method: "GET",
@@ -230,13 +230,13 @@ async function httpQuery(connectId, requestBody) {
 
     if (res.headers["content-disposition"].substring(0, 10) === "attachment") {
       // Vérifie que la réponse est un attachement
-      console.log("OK\n");
+      process.stdout.write("OK\n");
       return res.body; // Données csv. TODO: convertir en utf-8
     } else {
       throw "";
     }
   } catch (e) {
-    console.log("Echec\n");
+    process.stdout.write("Echec\n");
     throw "";
   }
 }
