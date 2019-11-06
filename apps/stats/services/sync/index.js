@@ -47,7 +47,7 @@ async function future() {
 /**
  * past
  * Exécute une requête sur les séances passées (depuis la dernière synchro) et écrit le fichier seances.json
- *
+ * 
  */
 async function past() {
   var currentDate = moment().startOf("day"); // On capture la date courante
@@ -83,7 +83,7 @@ async function past() {
 
       console.log(
         `${moment().format()} : Séances passées : Synchronisation terminée, ${
-          fetchedSeancesData[0].length
+        fetchedSeancesData[0].length
         } séances ajoutées ou réécrites.`
       );
       resolve();
@@ -92,6 +92,8 @@ async function past() {
     }
   });
 }
+
+
 
 /**
  * query
@@ -134,12 +136,12 @@ async function query(dateFrom, dateTo) {
   });
 }
 
+
 /**
  * connect
  * (Etape 1)
  * Effectue une requête de connexion sur le serveur distant.
- * En cas de réussite, un cookie est inscrit (géré automatiquement et globalement par jar).
- * 2019-11-05 : La valeur de retour `connectId` n'est plus utile. La finalité de cette fonction est seulement la mise en place des cookies, gérés au niveau global par jar.
+ * En cas de réussite, un cookie est inscrit (géré automatiquement par jar)
  * @param url { String }
  * @param login { String }
  * @param password { String }
@@ -148,31 +150,9 @@ async function query(dateFrom, dateTo) {
  * @date 2018-02-07 : utilise async/await
  */
 async function connect(url, login, password) {
-  let j = request.jar(); // https://github.com/request/request#requestjar
-
-  console.log("Connexion au serveur : ");
-  // console.log("Connexion au serveur : ");
+  process.stdout.write("Connexion au serveur : ");
   try {
-    // 2019-07-13 : Etape 0 à ajouter : simple requête sur la page de login, uniquement pour obtenir la valeur du cookie
-    let res = await request({
-      method: "GET",
-      uri: config.sync.homeUrl,
-      simple: false,
-      jar: j,
-      resolveWithFullResponse: true // https://github.com/request/request-promise#get-the-full-response-instead-of-just-the-body
-    });
-
-    console.log(JSON.stringify(res, null, 2));
-
-    let connectId = _(res.headers["set-cookie"])
-      .filter(d => _.startsWith(d, config.sync.cookieKey))
-      .value()[0];
-
-    connectId = connectId.match(/=([a-z\d]+);/)[1];
-
-    // Etape 1 : connexion au serveur
-    // 2019-07-14 : mise à jour du processus de connexion
-    res = await request({
+    var res = await request({
       method: "POST",
       uri: url,
       followRedirect: true,
@@ -185,18 +165,19 @@ async function connect(url, login, password) {
       resolveWithFullResponse: true
     });
 
-    // 2019-11-04 : On affiche connectId pour s'assurer qu'il a bien été trouvé, mais il est géré par le cookie jar.
+    // 2019-07-12 : Mise à jour pour suivre la modification du processus de connexion côté serveur.
+    // 2019-11-04 : On affiche connectId pour s'assurer qu'il a bien été inscrit, mais il est géré par le cookie jar.
     var connectId = _(res.headers["set-cookie"]).filter(d => _.startsWith(d, config.sync.cookieKey)).value()[0];
     connectId = connectId.match(/=([a-z\d]+);/)[1];
+
     process.stdout.write(`OK\n${connectId}\n`);
     return connectId;
   } catch (e) {
-    console.log("Echec\n");
-    // console.log("Echec\n");
-    console.log(e);
+    process.stdout.write("Echec\n");
     throw "";
   }
 }
+
 
 /**
  * httpQuery
@@ -222,6 +203,7 @@ async function httpQuery(connectId, requestBody) {
       uri: config.sync.queryUrl,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
+        // , Cookie: config.sync.cookieKey + "=" + connectId
       },
       json: true,
       body: requestBody,
@@ -241,12 +223,15 @@ async function httpQuery(connectId, requestBody) {
   }
 
   // Récupération des données
-  console.log("Récupération des données : ");
+  process.stdout.write("Récupération des données : ");
   try {
     res = await request({
       method: "GET",
       uri: config.sync.queryUrl + "&op=dl&format=csv&id=" + sessionId,
       simple: false,
+      // headers: {
+      //   Cookie: config.sync.cookieKey + "=" + connectId
+      // },
       json: false,
       jar: true,
       resolveWithFullResponse: true // https://github.com/request/request-promise#get-the-full-response-instead-of-just-the-body
@@ -260,10 +245,12 @@ async function httpQuery(connectId, requestBody) {
       throw "";
     }
   } catch (e) {
-    console.log("Echec\n");
+    process.stdout.write("Echec\n");
     throw "";
   }
 }
+
+
 
 /* calcDateFrom
  * Actuellement, on considère que la date de début de requête doit être la date des dernières données disponibles.
