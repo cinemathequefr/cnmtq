@@ -14,6 +14,9 @@ var enforceHttps = require("koa-sslify");
 
 moment.tz.setDefault("Europe/Paris");
 moment.updateLocale("fr", config.momentLocaleFr);
+
+// 2020-03-19 : Je désactive la synchro quotidienne en attendant la reprise des projections. 
+/*
 const syncJob = schedule.scheduleJob({
     hour: 22,
     minute: 45
@@ -26,10 +29,12 @@ const syncJob = schedule.scheduleJob({
     );
   }
 );
+ */
 
 const app = (module.exports = new Koa());
 
 // Enforce https (https://github.com/turboMaCk/koa-sslify)
+// Désactiver pour tests sur localhost
 app.use(
   enforceHttps({
     trustProtoHeader: true
@@ -63,6 +68,7 @@ app.use(router.public.routes());
 app.use(async (ctx, next) => {
   await next();
   if (ctx.status === 401) {
+    ctx.cookies.set("redir", ctx.originalUrl);
     ctx.redirect("/login");
   }
 });
