@@ -1,92 +1,109 @@
 /* ibm-plex-sans-300 */
 @font-face {
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-style: normal;
   font-weight: 300;
-  src: local('IBM Plex Sans Light'), local('IBMPlexSans-Light'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300.woff2') format('woff2'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300.woff') format('woff');
+  src: local("IBM Plex Sans Light"), local("IBMPlexSans-Light"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300.woff2")
+      format("woff2"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300.woff")
+      format("woff");
 }
 
 /* ibm-plex-sans-300italic */
 @font-face {
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-style: italic;
   font-weight: 300;
-  src: local('IBM Plex Sans Light Italic'), local('IBMPlexSans-LightItalic'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300italic.woff2') format('woff2'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300italic.woff') format('woff');
+  src: local("IBM Plex Sans Light Italic"), local("IBMPlexSans-LightItalic"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300italic.woff2")
+      format("woff2"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-300italic.woff")
+      format("woff");
 }
 
 /* ibm-plex-sans-regular */
 @font-face {
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-style: normal;
   font-weight: 400;
-  src: local('IBM Plex Sans'), local('IBMPlexSans'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-regular.woff2') format('woff2'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-regular.woff') format('woff');
+  src: local("IBM Plex Sans"), local("IBMPlexSans"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-regular.woff2")
+      format("woff2"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-regular.woff")
+      format("woff");
 }
-
 
 /* ibm-plex-sans-italic */
 @font-face {
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-style: italic;
   font-weight: 400;
-  src: local('IBM Plex Sans'), local('IBMPlexSans'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-italic.woff2') format('woff2'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-italic.woff') format('woff');
+  src: local("IBM Plex Sans"), local("IBMPlexSans"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-italic.woff2")
+      format("woff2"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-italic.woff")
+      format("woff");
 }
 
 /* ibm-plex-sans-600 */
 @font-face {
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-style: normal;
   font-weight: 600;
-  src: local('IBM Plex Sans SemiBold'), local('IBMPlexSans-SemiBold'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600.woff2') format('woff2'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600.woff') format('woff');
+  src: local("IBM Plex Sans SemiBold"), local("IBMPlexSans-SemiBold"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600.woff2")
+      format("woff2"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600.woff")
+      format("woff");
 }
 
 /* ibm-plex-sans-600italic */
 @font-face {
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-style: italic;
   font-weight: 600;
-  src: local('IBM Plex Sans SemiBold Italic'), local('IBMPlexSans-SemiBoldItalic'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600italic.woff2') format('woff2'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600italic.woff') format('woff');
+  src: local("IBM Plex Sans SemiBold Italic"),
+    local("IBMPlexSans-SemiBoldItalic"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600italic.woff2")
+      format("woff2"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-600italic.woff")
+      format("woff");
 }
 
 /* ibm-plex-sans-700 */
 @font-face {
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-style: normal;
   font-weight: 700;
-  src: local('IBM Plex Sans Bold'), local('IBMPlexSans-Bold'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700.woff2') format('woff2'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700.woff') format('woff');
+  src: local("IBM Plex Sans Bold"), local("IBMPlexSans-Bold"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700.woff2")
+      format("woff2"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700.woff")
+      format("woff");
 }
 
 /* ibm-plex-sans-700italic */
 @font-face {
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-style: italic;
   font-weight: 700;
-  src: local('IBM Plex Sans Bold Italic'), local('IBMPlexSans-BoldItalic'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700italic.woff2') format('woff2'),
-    url('../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700italic.woff') format('woff');
+  src: local("IBM Plex Sans Bold Italic"), local("IBMPlexSans-BoldItalic"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700italic.woff2")
+      format("woff2"),
+    url("../fonts/ibm-plex-sans-v2-cyrillic_latin-ext_latin-700italic.woff")
+      format("woff");
 }
 
 /* ibm-plex-mono-regular - latin-ext_latin */
 @font-face {
-  font-family: 'IBM Plex Mono';
+  font-family: "IBM Plex Mono";
   font-style: normal;
   font-weight: 400;
-  src: local('IBM Plex Mono'), local('IBMPlexMono'),
-    url('../fonts/ibm-plex-mono-v2-latin-ext_latin-regular.woff2') format('woff2'),
-    url('../fonts/ibm-plex-mono-v2-latin-ext_latin-regular.woff') format('woff');
+  src: local("IBM Plex Mono"), local("IBMPlexMono"),
+    url("../fonts/ibm-plex-mono-v2-latin-ext_latin-regular.woff2")
+      format("woff2"),
+    url("../fonts/ibm-plex-mono-v2-latin-ext_latin-regular.woff") format("woff");
 }
 
 html {
@@ -98,7 +115,6 @@ body {
   background-color: #b4bf9f;
   font-family: "IBM Plex Sans", "Segoe UI", Calibri, Helvetica, sans-serif;
 }
-
 
 input {
   font-family: "IBM Plex Sans", "Segoe UI", Calibri, Helvetica, sans-serif;
@@ -121,7 +137,6 @@ a:active {
   text-decoration: underline;
 }
 
-
 .header-container {
   position: relative;
   width: 100%;
@@ -141,12 +156,12 @@ a:active {
   box-sizing: border-box;
 }
 
-.header>div {
+.header > div {
   flex: 1;
   padding: 0 12px;
 }
 
-.header>div:nth-child(2) {
+.header > div:nth-child(2) {
   text-align: right;
 }
 
@@ -164,7 +179,6 @@ ul.menu {
   padding: 0;
   list-style-type: none;
 }
-
 
 ul.menu li {
   display: inline-block;
@@ -196,7 +210,6 @@ h2 {
   font-size: 1rem;
   font-weight: 600;
 }
-
 
 .main {
   width: 1000px;
@@ -235,8 +248,7 @@ td.sub {
   border: none;
   padding: 0 0 2px 0;
   font-weight: 600;
-  font-size: .938rem;
-
+  font-size: 0.938rem;
 }
 
 th {
@@ -267,7 +279,6 @@ th {
   font-size: 0.85em;
 }
 
-
 .id-seance {
   color: #195916;
 }
@@ -276,12 +287,12 @@ th {
   margin-bottom: 24px;
 }
 
-#datepicker>#date {
+#datepicker > #date {
   padding: 4px 12px;
   border: solid 1px #999;
 }
 
-#datepicker input[type=submit] {
+#datepicker input[type="submit"] {
   padding: 5px 12px;
   background-color: #ccc;
   color: #000;
