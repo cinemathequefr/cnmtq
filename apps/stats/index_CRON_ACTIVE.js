@@ -14,12 +14,10 @@ var enforceHttps = require("koa-sslify");
 
 moment.tz.setDefault("Europe/Paris");
 moment.updateLocale("fr", config.momentLocaleFr);
-
-// 2020-03-19 : Je désactive la synchro quotidienne en attendant la reprise des projections.
-/*
-const syncJob = schedule.scheduleJob({
+const syncJob = schedule.scheduleJob(
+  {
     hour: 22,
-    minute: 45
+    minute: 45,
   },
   async function () {
     await sync.past();
@@ -29,7 +27,6 @@ const syncJob = schedule.scheduleJob({
     );
   }
 );
- */
 
 const app = (module.exports = new Koa());
 
