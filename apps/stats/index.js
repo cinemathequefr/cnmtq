@@ -14,9 +14,10 @@ var enforceHttps = require("koa-sslify");
 
 moment.tz.setDefault("Europe/Paris");
 moment.updateLocale("fr", config.momentLocaleFr);
-const syncJob = schedule.scheduleJob({
+const syncJob = schedule.scheduleJob(
+  {
     hour: 22,
-    minute: 45
+    minute: 45,
   },
   async function () {
     await sync.past();
@@ -30,9 +31,10 @@ const syncJob = schedule.scheduleJob({
 const app = (module.exports = new Koa());
 
 // Enforce https (https://github.com/turboMaCk/koa-sslify)
+// Désactiver pour tests sur localhost
 app.use(
   enforceHttps({
-    trustProtoHeader: true
+    trustProtoHeader: true,
   })
 );
 
@@ -47,13 +49,13 @@ app.use(serve(__dirname + "/public"));
 app.use(
   views(__dirname + "/views", {
     map: {
-      html: "lodash"
+      html: "lodash",
     },
     options: {
       partials: {
-        header: "partials/header"
-      }
-    }
+        header: "partials/header",
+      },
+    },
   })
 );
 
@@ -63,6 +65,8 @@ app.use(router.public.routes());
 app.use(async (ctx, next) => {
   await next();
   if (ctx.status === 401) {
+    // TODO: cookie to redirect after login
+    // ctx.cookies.set("redir", ctx.originalUrl);
     ctx.redirect("/login");
   }
 });

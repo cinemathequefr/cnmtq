@@ -15,7 +15,7 @@ var enforceHttps = require("koa-sslify");
 moment.tz.setDefault("Europe/Paris");
 moment.updateLocale("fr", config.momentLocaleFr);
 
-// 2020-03-19 : Je désactive la synchro quotidienne en attendant la reprise des projections. 
+// 2020-03-19 : Je désactive la synchro quotidienne en attendant la reprise des projections.
 /*
 const syncJob = schedule.scheduleJob({
     hour: 22,
@@ -37,7 +37,7 @@ const app = (module.exports = new Koa());
 // Désactiver pour tests sur localhost
 app.use(
   enforceHttps({
-    trustProtoHeader: true
+    trustProtoHeader: true,
   })
 );
 
@@ -52,13 +52,13 @@ app.use(serve(__dirname + "/public"));
 app.use(
   views(__dirname + "/views", {
     map: {
-      html: "lodash"
+      html: "lodash",
     },
     options: {
       partials: {
-        header: "partials/header"
-      }
-    }
+        header: "partials/header",
+      },
+    },
   })
 );
 
@@ -68,7 +68,8 @@ app.use(router.public.routes());
 app.use(async (ctx, next) => {
   await next();
   if (ctx.status === 401) {
-    ctx.cookies.set("redir", ctx.originalUrl);
+    // TODO: cookie to redirect after login
+    // ctx.cookies.set("redir", ctx.originalUrl);
     ctx.redirect("/login");
   }
 });
