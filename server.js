@@ -27,13 +27,13 @@ const vhostApps = [
     app: require("./apps/www/index.js"),
   },
   {
-    vhost: "tools.cnmtq.fr",
+    vhost: "tools.cnmtq.fr",  
     app: require("./apps/tools/index.js"),
   },
-  {
-    vhost: "api.cnmtq.fr",
-    app: require("./apps/api/index.js"),
-  },
+  // {
+  //   vhost: "api.cnmtq.fr",
+  //   app: require("./apps/api/index.js"),
+  // },
 ];
 
 server.keys = config.session.keys;

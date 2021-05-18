@@ -10,7 +10,7 @@ const timezone = require("moment-timezone");
 const config = require("./config");
 const router = require("./routes");
 const controllers = require("./controllers");
-var enforceHttps = require("koa-sslify");
+const enforceHttps = require("koa-sslify");
 
 moment.tz.setDefault("Europe/Paris");
 moment.updateLocale("fr", config.momentLocaleFr);
